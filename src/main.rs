@@ -2,6 +2,7 @@
 #[tokio::main]
 async fn main() {
     use axum::Router;
+    use tower_http::cors::{CorsLayer};
     use leptos::*;
     use leptos_axum::{generate_route_list, LeptosRoutes};
     use rustpress_view::app::*;
@@ -20,6 +21,7 @@ async fn main() {
     // build our application with a route
     let app = Router::new()
         .leptos_routes(&leptos_options, routes, App)
+        .layer(CorsLayer::permissive())
         .fallback(file_and_error_handler)
         .with_state(leptos_options);
 
