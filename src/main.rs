@@ -2,11 +2,11 @@
 #[tokio::main]
 async fn main() {
     use axum::Router;
-    use tower_http::cors::{CorsLayer};
     use leptos::*;
     use leptos_axum::{generate_route_list, LeptosRoutes};
     use rustpress_view::app::*;
     use rustpress_view::fileserv::file_and_error_handler;
+    use tower_http::cors::CorsLayer;
 
     // Setting get_configuration(None) means we'll be using cargo-leptos's env values
     // For deployment these variables are:
