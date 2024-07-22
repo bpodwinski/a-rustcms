@@ -13,3 +13,9 @@ end2end/playwright-report/
 playwright/.cache/
 .env
 .lock
+/Cargo.lock
+/.idea/modules.xml
+/end2end/playwright.config.ts
+/.idea/rustpress_view.iml
+/.idea/vcs.xml
+/.idea/workspace.xml
