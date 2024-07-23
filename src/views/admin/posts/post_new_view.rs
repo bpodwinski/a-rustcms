@@ -1,7 +1,7 @@
 use leptos::*;
-use leptos_meta::*;
 use web_sys::SubmitEvent;
 
+use crate::components::admin::header_content::HeaderContent;
 use crate::services::admin::api::posts::add_post;
 use crate::structs::admin::posts::PostNewStruct;
 use crate::utils::add_class::add_class;
@@ -40,8 +40,7 @@ pub fn PostNew() -> impl IntoView {
     };
 
     view! {
-        <Title text="Add new post"/>
-        <h1>"Add new post"</h1>
+        <HeaderContent title="Add new post"/>
 
         <form on:submit=on_submit>
             <input type="hidden" value=author_id/>

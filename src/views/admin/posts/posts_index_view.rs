@@ -1,6 +1,6 @@
 use leptos::*;
-use leptos_meta::*;
 
+use crate::components::admin::header_content::{ButtonProps, HeaderContent};
 use crate::{services::admin::api::posts::get_posts, utils::add_class::add_class};
 
 #[component]
@@ -10,13 +10,13 @@ pub fn Posts() -> impl IntoView {
     let posts = create_resource(|| (), |_| async { get_posts().await });
 
     view! {
-        <div class="header-content">
-            <Title text="Posts"/>
-            <h1>"Posts"</h1>
-            <a class="btn btn-outline-primary" href="/rs-admin/posts/new" role="button">
-                Add new post
-            </a>
-        </div>
+        <HeaderContent
+            title="Posts"
+            button=ButtonProps {
+                text: "Add new post",
+                url: "/rs-admin/posts/new",
+            }
+        />
 
         <Suspense fallback=move || view! { <p>"Loading posts..."</p> }>
             <table class="table">
