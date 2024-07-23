@@ -1,14 +1,20 @@
 use leptos::*;
 use leptos_meta::*;
+use serde::{Deserialize, Serialize};
 use web_sys::SubmitEvent;
 
-use crate::services::admin::api::posts::add_post;
-use crate::structs::admin::posts::PostNewStruct;
 use crate::utils::add_class::add_class;
 
+#[derive(Serialize, Deserialize, Clone, Debug)]
+struct Post {
+    title: String,
+    content: String,
+    author_id: u32,
+}
+
 #[component]
-pub fn PostNew() -> impl IntoView {
-    add_class("body", "post-new");
+pub fn PostEdit() -> impl IntoView {
+    add_class("body", "post-edit");
 
     let (title, set_title) = create_signal(String::new());
     let (content, set_content) = create_signal(String::new());
@@ -16,7 +22,7 @@ pub fn PostNew() -> impl IntoView {
 
     let on_submit = move |ev: SubmitEvent| {
         ev.prevent_default();
-        let post = PostNewStruct {
+        let post = Post {
             title: title.get().clone(),
             content: content.get().clone(),
             author_id: author_id.get(),
@@ -25,16 +31,10 @@ pub fn PostNew() -> impl IntoView {
         log::info!("Submitting post: {:?}", post);
 
         spawn_local(async move {
-            match add_post(post).await {
-                Ok(returned_post) => {
-                    log::info!("Post submitted successfully");
-                    // Update the form fields with the returned post data
-                    set_title.set(returned_post.title);
-                    set_content.set(returned_post.content);
-                }
-                Err(e) => {
-                    log::error!("Failed to submit post: {}", e);
-                }
+            if let Err(e) = submit_post("http://127.0.0.1:8080/api/v1/posts", post).await {
+                log::error!("Failed to submit post: {}", e);
+            } else {
+                log::info!("Post submitted successfully");
             }
         });
     };
@@ -76,4 +76,21 @@ pub fn PostNew() -> impl IntoView {
 
         </form>
     }
+}
+
+async fn submit_post(api_url: &str, post: Post) -> Result<(), String> {
+    use reqwest::Client;
+
+    let client = Client::new();
+
+    client
+        .post(api_url)
+        .json(&post)
+        .send()
+        .await
+        .map_err(|e| e.to_string())?
+        .error_for_status()
+        .map_err(|e| e.to_string())?;
+
+    Ok(())
 }

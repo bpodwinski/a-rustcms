@@ -7,3 +7,10 @@ pub struct Post {
     pub content: String,
     pub author_id: u32,
 }
+
+#[derive(Serialize, Deserialize, Clone, Debug)]
+pub struct PostNewStruct {
+    pub title: String,
+    pub content: String,
+    pub author_id: u32,
+}
