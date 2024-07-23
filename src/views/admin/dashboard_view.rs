@@ -1,22 +1,14 @@
 use leptos::*;
 use leptos_meta::*;
 
+use crate::utils::add_class::add_class;
+
 #[component]
 pub fn Dashboard() -> impl IntoView {
-    create_effect(move |_| {
-        let body = document().body().expect("document should have a body");
-        body.class_list()
-            .add_1("dashboard")
-            .expect("could not add class");
-        on_cleanup(move || {
-            body.class_list()
-                .remove_1("dashboard")
-                .expect("could not remove class");
-        });
-    });
+    add_class("body", "dashboard");
 
     view! {
         <Title text="Dashboard"/>
-        <h1>"Dashboard"</h1>
+        <h1 class="row">"Dashboard"</h1>
     }
 }

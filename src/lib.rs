@@ -2,6 +2,9 @@ pub mod app;
 pub mod error_template;
 #[cfg(feature = "ssr")]
 pub mod fileserv;
+pub mod services;
+pub mod structs;
+pub mod utils;
 pub mod views;
 
 #[cfg(feature = "hydrate")]

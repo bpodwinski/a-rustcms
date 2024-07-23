@@ -3,6 +3,8 @@ use leptos_meta::*;
 use serde::{Deserialize, Serialize};
 use web_sys::SubmitEvent;
 
+use crate::utils::add_class::add_class;
+
 #[derive(Serialize, Deserialize, Clone, Debug)]
 struct Post {
     title: String,
@@ -12,6 +14,8 @@ struct Post {
 
 #[component]
 pub fn PostNew() -> impl IntoView {
+    add_class("body", "post-new");
+
     let (title, set_title) = create_signal(String::new());
     let (content, set_content) = create_signal(String::new());
     let (author_id, _set_author_id) = create_signal(1);
@@ -35,34 +39,40 @@ pub fn PostNew() -> impl IntoView {
         });
     };
 
-    create_effect(move |_| {
-        let body = document().body().expect("document should have a body");
-        body.class_list()
-            .add_1("post-new")
-            .expect("could not add class");
-        on_cleanup(move || {
-            body.class_list()
-                .remove_1("post-new")
-                .expect("could not remove class");
-        });
-    });
-
     view! {
         <Title text="Add new post"/>
         <h1>"Add new post"</h1>
 
         <form on:submit=on_submit>
-        <input type="hidden" value={author_id} />
+            <input type="hidden" value=author_id/>
 
-          <div class="mb-3">
-            <label for="post-title" class="form-label">Title</label>
-            <input type="text" on:input=move |ev| set_title.set(event_target_value(&ev)) prop:value=title class="form-control" id="post-title"/>
-          </div>
-          <div class="mb-3">
-            <label for="post-content" class="form-label">Content</label>
-            <textarea on:input=move |ev| set_content.set(event_target_value(&ev)) prop:value=content class="form-control" id="post-content" rows="6"></textarea>
-          </div>
-          <button type="submit" class="btn btn-primary">Submit</button>
+            <div class="mb-3">
+                <label for="post-title" class="form-label">
+                    Title
+                </label>
+                <input
+                    type="text"
+                    on:input=move |ev| set_title.set(event_target_value(&ev))
+                    prop:value=title
+                    class="form-control"
+                    id="post-title"
+                />
+            </div>
+            <div class="mb-3">
+                <label for="post-content" class="form-label">
+                    Content
+                </label>
+                <textarea
+                    on:input=move |ev| set_content.set(event_target_value(&ev))
+                    prop:value=content
+                    class="form-control"
+                    id="post-content"
+                    rows="6"
+                ></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">
+                Submit
+            </button>
 
         </form>
     }

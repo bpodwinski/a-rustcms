@@ -4,10 +4,6 @@ version = "0.1.0"
 authors = ["Your Name <me@benoitpodwinski.com>"]
 edition = "2021"
 
-[[bin]]
-name = "rustpress_view_bin"
-path = "src/main.rs"
-
 [lib]
 crate-type = ["cdylib", "rlib"]
 
