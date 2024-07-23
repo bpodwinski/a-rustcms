@@ -1,7 +1,12 @@
 [package]
 name = "rustpress_view"
 version = "0.1.0"
+authors = ["Your Name <me@benoitpodwinski.com>"]
 edition = "2021"
+
+[[bin]]
+name = "rustpress_view_bin"
+path = "src/main.rs"
 
 [lib]
 crate-type = ["cdylib", "rlib"]
@@ -15,7 +20,11 @@ leptos_meta = { version = "0.6" }
 leptos_router = { version = "0.6" }
 tokio = { version = "1", features = ["rt-multi-thread"], optional = true }
 tower = { version = "0.4", optional = true }
-tower-http = { version = "0.5", features = ["fs", "cors", "trace"], optional = true }
+tower-http = { version = "0.5", features = [
+    "fs",
+    "cors",
+    "trace",
+], optional = true }
 wasm-bindgen = "=0.2.92"
 thiserror = "1"
 tracing = { version = "0.1", optional = true }
