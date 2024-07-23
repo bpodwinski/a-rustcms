@@ -41,7 +41,12 @@ pub fn Posts() -> impl IntoView {
                                                 view! {
                                                     <tr>
                                                         <td>{post.id}</td>
-                                                        <td>{&post.title}</td>
+                                                        <td>
+                                                            <a href=format!(
+                                                                "/rs-admin/posts/edit/{}",
+                                                                post.id,
+                                                            )>{&post.title}</a>
+                                                        </td>
                                                         <td>{&post.content}</td>
                                                         <td>{post.author_id}</td>
                                                     </tr>

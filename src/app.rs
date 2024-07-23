@@ -4,8 +4,8 @@ use leptos_meta::*;
 use leptos_router::*;
 
 use crate::views::{
-    admin::dashboard_view::Dashboard, admin::posts::edit_post_view::PostEdit,
-    admin::posts::post_new_view::PostNew, admin::posts::posts_index_view::Posts,
+    admin::dashboard_view::Dashboard, admin::posts::post_new_view::PostNew,
+    admin::posts::posts_index_view::Posts,
 };
 
 #[component]
@@ -59,7 +59,6 @@ pub fn App() -> impl IntoView {
                                 <Route path="/rs-admin" view=Dashboard/>
                                 <Route path="/rs-admin/posts" view=Posts/>
                                 <Route path="/rs-admin/posts/new" view=PostNew/>
-                                <Route path="/rs-admin/posts/edit/{id}" view=PostEdit/>
                             </Routes>
                         </div>
                     </div>
