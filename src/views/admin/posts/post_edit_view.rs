@@ -1,9 +1,10 @@
+use ev::SubmitEvent;
 use leptos::*;
 use leptos_router::use_params_map;
 
 use crate::components::admin::header_content::HeaderContent;
-use crate::services::admin::api::posts::get_post_by_id;
-use crate::structs::admin::posts::PostStruct;
+use crate::services::admin::api::posts::{get_post_by_id, update_post};
+use crate::structs::admin::posts::{PostNewStruct, PostStruct};
 use crate::utils::add_class::add_class;
 
 #[component]
@@ -23,6 +24,7 @@ pub fn PostEdit() -> impl IntoView {
 
     create_effect(move |_| {
         let post_id = post_id.clone();
+
         spawn_local(async move {
             let post_data = get_post_by_id(post_id).await.unwrap_or(PostStruct {
                 id: 0,
@@ -30,14 +32,31 @@ pub fn PostEdit() -> impl IntoView {
                 content: String::new(),
                 author_id: 0,
             });
+
             set_post.set(post_data);
         });
     });
 
+    let on_submit = move |event: SubmitEvent| {
+        event.prevent_default();
+
+        let updated_post = PostNewStruct {
+            title: post.get().title.clone(),
+            content: post.get().content.clone(),
+            author_id: post.get().author_id,
+        };
+
+        spawn_local(async move {
+            let _ = update_post(post_id, updated_post).await;
+        });
+    };
+
     view! {
         <HeaderContent title="Edit post"/>
 
-        <form>
+        <form on:submit=on_submit>
+            <input type="hidden" id="author-id" value=move || post.with(|p| p.author_id.clone())/>
+
             <div class="mb-3">
                 <label for="post-title" class="form-label">
                     Title
@@ -47,9 +66,11 @@ pub fn PostEdit() -> impl IntoView {
                     class="form-control"
                     id="post-title"
                     prop:value=move || post.with(|p| p.title.clone())
+                    on:input=move |e| set_post.update(|p| p.title = event_target_value(&e))
                 />
 
             </div>
+
             <div class="mb-3">
                 <label for="post-content" class="form-label">
                     Content
@@ -59,10 +80,12 @@ pub fn PostEdit() -> impl IntoView {
                     id="post-content"
                     rows="8"
                     prop:value=move || post.with(|p| p.content.clone())
+                    on:input=move |e| set_post.update(|p| p.content = event_target_value(&e))
                 >
                     {post.with_untracked(|p| p.content.clone())}
                 </textarea>
             </div>
+
             <button type="submit" class="btn btn-primary">
                 Submit
             </button>
