@@ -22,6 +22,14 @@ pub fn Posts() -> impl IntoView {
             <table class="table">
                 <thead>
                     <tr>
+                        <th scope="col">
+                            <input
+                                class="form-check-input"
+                                type="checkbox"
+                                value=""
+                                id="flexCheckDefault"
+                            />
+                        </th>
                         <th scope="col">#</th>
                         <th scope="col">Title</th>
                         <th scope="col">Content</th>
@@ -40,10 +48,18 @@ pub fn Posts() -> impl IntoView {
                                             .map(|post| {
                                                 view! {
                                                     <tr>
+                                                        <td>
+                                                            <input
+                                                                class="form-check-input"
+                                                                type="checkbox"
+                                                                value=""
+                                                                id="flexCheckDefault"
+                                                            />
+                                                        </td>
                                                         <td>{post.id}</td>
                                                         <td>
                                                             <a href=format!(
-                                                                "/rs-admin/posts/edit/{}",
+                                                                "/rs-admin/posts/{}/edit",
                                                                 post.id,
                                                             )>{&post.title}</a>
                                                         </td>
