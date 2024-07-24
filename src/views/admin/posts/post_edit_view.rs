@@ -4,7 +4,7 @@ use leptos_router::use_params_map;
 
 use crate::components::admin::header_content::HeaderContent;
 use crate::services::admin::api::posts::{get_post_by_id, update_post};
-use crate::structs::admin::posts::{PostNewStruct, PostStruct};
+use crate::structs::admin::posts::{PostNewStruct, PostStatusEnum, PostStruct};
 use crate::utils::add_class::add_class;
 
 #[component]
@@ -20,6 +20,7 @@ pub fn PostEdit() -> impl IntoView {
         title: String::new(),
         content: String::new(),
         author_id: 0,
+        status: PostStatusEnum::Draft,
     });
 
     create_effect(move |_| {
@@ -31,6 +32,7 @@ pub fn PostEdit() -> impl IntoView {
                 title: String::new(),
                 content: String::new(),
                 author_id: 0,
+                status: PostStatusEnum::Draft,
             });
 
             set_post.set(post_data);
@@ -44,6 +46,7 @@ pub fn PostEdit() -> impl IntoView {
             title: post.get().title.clone(),
             content: post.get().content.clone(),
             author_id: post.get().author_id,
+            status: post.get().status.clone(),
         };
 
         spawn_local(async move {
