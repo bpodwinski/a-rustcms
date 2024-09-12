@@ -2,7 +2,7 @@ use reqwest::{Client, Response};
 
 use crate::structs::admin::posts::{PostNewStruct, PostStruct};
 
-const BASE_URL: &str = "http://127.0.0.1:8080/api/v1/posts";
+const BASE_URL: &str = "http://127.0.0.1:6988/api/v1/posts";
 
 async fn handle_response<T>(response: Response) -> Result<T, String>
 where
@@ -55,7 +55,10 @@ pub async fn add_post(post: PostNewStruct) -> Result<PostNewStruct, String> {
     handle_response(response).await
 }
 
-pub async fn update_post(post_id: u32, post: PostNewStruct) -> Result<PostNewStruct, String> {
+pub async fn update_post(
+    post_id: u32,
+    post: PostNewStruct,
+) -> Result<PostNewStruct, String> {
     let client = Client::new();
     let url = format!("{}/{}", BASE_URL, post_id);
 

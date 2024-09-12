@@ -26,11 +26,11 @@
     "configurations": [
       {
         "name": "Cargo Leptos Watch (Windows)",
-        "type": "cppvsdbg",
+        "type": "lldb",
         "request": "launch",
         "program": "cargo",
         "args": ["leptos", "watch"],
-        "cwd": "${workspaceRoot}",
+        "cwd": "${workspaceFolder}",
         "console": "integratedTerminal",
         "internalConsoleOptions": "neverOpen"
       }
