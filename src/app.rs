@@ -3,9 +3,11 @@ use leptos_meta::*;
 use leptos_router::*;
 
 use crate::error_template::{AppError, ErrorTemplate};
-use crate::views::{
-    admin::dashboard_view::Dashboard, admin::posts::post_new_view::PostNew,
-    admin::posts::posts_index_view::Posts,
+use crate::views::admin::dashboard_view::Dashboard;
+use crate::views::admin::login_view::LoginView;
+use crate::views::admin::{
+    layout::AdminLayout,
+    posts::{post_new_view::PostNew, posts_index_view::Posts},
 };
 
 #[component]
@@ -28,22 +30,6 @@ pub fn App() -> impl IntoView {
             outside_errors.insert_with_default_key(AppError::NotFound);
             view! { <ErrorTemplate outside_errors/> }.into_view()
         }>
-            <nav class="admin-menu">
-                <ul class="nav flex-column">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/rs-admin">
-                            <i class="bi bi-speedometer2 me-2"></i>
-                            Dashboard
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/rs-admin/posts">
-                            <i class="bi bi-pin-angle me-2"></i>
-                            Posts
-                        </a>
-                    </li>
-                </ul>
-            </nav>
             <main>
                 <Title formatter/>
 
@@ -51,15 +37,23 @@ pub fn App() -> impl IntoView {
                 <Meta name="title" content="RustPress"/>
                 <Meta name="description" content="A Wordpress clone in Rust!"/>
 
-                <Html lang="en" dir="ltr" attr:data-theme="light"/>
+                <Html lang="en" dir="ltr" attr:data-bs-theme="dark"/>
+
                 <div class="container-fluid">
                     <div class="row">
                         <div class="col">
                             <Routes>
-                                <Route path="/rs-admin" view=Dashboard/>
-                                <Route path="/rs-admin/posts" view=Posts/>
-                                <Route path="/rs-admin/posts/new" view=PostNew/>
-                            // <Route path="/rs-admin/posts/:id/edit" view=PostEdit/>
+                                <Routes>
+                                    <Route path="/rs-admin" view=AdminLayout>
+                                        <Route path="" view=Dashboard/>
+                                        <Route path="posts" view=Posts/>
+                                        <Route path="posts/new" view=PostNew/>
+                                    </Route>
+
+                                    <Route path="/rs-admin/login" view=LoginView/>
+
+                                    <Route path="" view=|| view! { <p>"404 Not Found"</p> }/>
+                                </Routes>
                             </Routes>
                         </div>
                     </div>
