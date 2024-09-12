@@ -19,7 +19,20 @@
       "editorRuler.foreground": "#ffffff1f",
       "statusBar.background": "#492828"
     },
-    "editor.rulers": [80]
+    "editor.rulers": [
+      {
+        "column": 80,
+        "color": "#00ff2a2a"
+      },
+      {
+        "column": 100,
+        "color": "#ffae002a"
+      },
+      {
+        "column": 120,
+        "color": "#ff11002a"
+      }
+    ]
   },
   "launch": {
     "version": "0.2.0",

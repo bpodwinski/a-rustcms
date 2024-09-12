@@ -12,7 +12,9 @@ pub fn PostEdit() -> impl IntoView {
     add_class("body", "post-edit");
 
     let params = use_params_map();
-    let id = move || params.with(|params| params.get("id").cloned().unwrap_or_default());
+    let id = move || {
+        params.with(|params| params.get("id").cloned().unwrap_or_default())
+    };
     let post_id: u32 = id().parse().unwrap_or(0);
 
     let (post, set_post) = create_signal(PostStruct {
@@ -27,13 +29,17 @@ pub fn PostEdit() -> impl IntoView {
         let post_id = post_id.clone();
 
         spawn_local(async move {
-            let post_data = get_post_by_id(post_id).await.unwrap_or(PostStruct {
-                id: 0,
-                title: String::new(),
-                content: String::new(),
-                author_id: 0,
-                status: PostStatusEnum::Draft,
-            });
+            let post_data =
+                get_post_by_id(post_id).await.unwrap_or(PostStruct {
+                    id: 0,
+                    title: String::new(),
+                    content: String::new(),
+                    slug: "test-123".to_string(),
+                    author_id: 0,
+                    status: PostStatusEnum::Draft,
+                    date_published: date_published.get().clone(),
+                    categories: categories.get().clone(),
+                });
 
             set_post.set(post_data);
         });
