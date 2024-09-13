@@ -1,16 +1,9 @@
 use leptos::*;
 use leptos_router::*;
 
-use crate::{
-    components::admin::admin_bar::AdminBar, utils::add_class::add_class,
-};
-
 #[component]
-pub fn AdminLayout() -> impl IntoView {
-    add_class("body", "admin");
-
+pub fn AdminMenu() -> impl IntoView {
     view! {
-        <AdminBar/>
         <nav class="admin-menu">
             <ul class="nav flex-column">
                 <li class="nav-item">
@@ -25,9 +18,19 @@ pub fn AdminLayout() -> impl IntoView {
                         Posts
                     </A>
                 </li>
+                <li class="nav-item">
+                    <A class="nav-link" href="categories">
+                        <i class="bi bi-bookmarks me-2"></i>
+                        Categories
+                    </A>
+                </li>
+                <li class="nav-item">
+                    <A class="nav-link" href="tags">
+                        <i class="bi bi-tag me-2"></i>
+                        Tags
+                    </A>
+                </li>
             </ul>
         </nav>
-
-        <Outlet/>
     }
 }

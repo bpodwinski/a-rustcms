@@ -1,10 +1,12 @@
 use leptos::*;
 
 use crate::components::admin::header_content::{ButtonProps, HeaderContent};
-use crate::{services::admin::api::posts::get_posts, utils::add_class::add_class};
+use crate::{
+    services::admin::api::posts::get_posts, utils::add_class::add_class,
+};
 
 #[component]
-pub fn Posts() -> impl IntoView {
+pub fn AdminPosts() -> impl IntoView {
     add_class("body", "posts");
 
     let posts = create_resource(|| (), |_| async { get_posts().await });

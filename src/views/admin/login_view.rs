@@ -5,7 +5,7 @@ use crate::components::admin::header_content::HeaderContent;
 use crate::utils::add_class::add_class;
 
 #[component]
-pub fn LoginView() -> impl IntoView {
+pub fn AdminLoginView() -> impl IntoView {
     add_class("body", "login");
 
     let (email, set_email) = create_signal(String::new());

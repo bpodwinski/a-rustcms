@@ -3,11 +3,11 @@ use leptos_meta::*;
 use leptos_router::*;
 
 use crate::error_template::{AppError, ErrorTemplate};
-use crate::views::admin::dashboard_view::Dashboard;
-use crate::views::admin::login_view::LoginView;
+use crate::views::admin::dashboard_view::AdminDashboardView;
+use crate::views::admin::login_view::AdminLoginView;
 use crate::views::admin::{
-    layout::AdminLayout,
-    posts::{post_new_view::PostNew, posts_index_view::Posts},
+    layout_view::AdminLayoutView,
+    posts::{post_new_view::AdminPostNew, posts_index_view::AdminPosts},
 };
 
 #[component]
@@ -44,13 +44,13 @@ pub fn App() -> impl IntoView {
                         <div class="col">
                             <Routes>
                                 <Routes>
-                                    <Route path="/rs-admin" view=AdminLayout>
-                                        <Route path="" view=Dashboard/>
-                                        <Route path="posts" view=Posts/>
-                                        <Route path="posts/new" view=PostNew/>
+                                    <Route path="/rs-admin" view=AdminLayoutView>
+                                        <Route path="" view=AdminDashboardView/>
+                                        <Route path="posts" view=AdminPosts/>
+                                        <Route path="posts/new" view=AdminPostNew/>
                                     </Route>
 
-                                    <Route path="/rs-admin/login" view=LoginView/>
+                                    <Route path="/rs-admin/login" view=AdminLoginView/>
 
                                     <Route path="" view=|| view! { <p>"404 Not Found"</p> }/>
                                 </Routes>
