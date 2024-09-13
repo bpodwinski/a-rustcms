@@ -35,6 +35,7 @@ web-sys = "0.3"
 strum_macros = "0.26"
 strum = "0.26"
 chrono = { version = "0.4", features = ["serde"] }
+handlebars = "6.1"
 
 [features]
 hydrate = ["leptos/hydrate", "leptos_meta/hydrate", "leptos_router/hydrate"]

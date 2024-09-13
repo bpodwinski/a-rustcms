@@ -9,10 +9,10 @@ use crate::views::admin::login::login_view::AdminLoginView;
 use crate::views::admin::posts::post_new_view::AdminPostNewView;
 use crate::views::admin::posts::posts_index_view::AdminPostsView;
 use crate::views::admin::tags::tags_index_view::AdminTagsView;
+use crate::views::front::home_view::FrontHomeView;
 
 #[component]
 pub fn App() -> impl IntoView {
-    // Provides context that manages stylesheets, titles, meta tags, etc.
     provide_meta_context();
     let formatter = |text| format!("{text} - RustPress");
 
@@ -44,6 +44,8 @@ pub fn App() -> impl IntoView {
                         <div class="col">
                             <Routes>
                                 <Routes>
+
+                                    // Admin routes
                                     <Route path="/rs-admin" view=AdminLayoutView>
                                         <Route path="" view=AdminDashboardView/>
 
@@ -57,7 +59,9 @@ pub fn App() -> impl IntoView {
 
                                     <Route path="/rs-admin/login" view=AdminLoginView/>
 
-                                    <Route path="" view=|| view! { <p>"404 Not Found"</p> }/>
+                                    // Front routes
+                                    <Route path="/" view=FrontHomeView/>
+
                                 </Routes>
                             </Routes>
                         </div>
