@@ -3,12 +3,12 @@ use leptos_meta::*;
 use leptos_router::*;
 
 use crate::error_template::{AppError, ErrorTemplate};
-use crate::views::admin::dashboard_view::AdminDashboardView;
-use crate::views::admin::login_view::AdminLoginView;
-use crate::views::admin::{
-    layout_view::AdminLayoutView,
-    posts::{post_new_view::AdminPostNew, posts_index_view::AdminPosts},
-};
+use crate::views::admin::dashboard::dashboard_view::AdminDashboardView;
+use crate::views::admin::layout_view::AdminLayoutView;
+use crate::views::admin::login::login_view::AdminLoginView;
+use crate::views::admin::posts::post_new_view::AdminPostNewView;
+use crate::views::admin::posts::posts_index_view::AdminPostsView;
+use crate::views::admin::tags::tags_index_view::AdminTagsView;
 
 #[component]
 pub fn App() -> impl IntoView {
@@ -46,8 +46,13 @@ pub fn App() -> impl IntoView {
                                 <Routes>
                                     <Route path="/rs-admin" view=AdminLayoutView>
                                         <Route path="" view=AdminDashboardView/>
-                                        <Route path="posts" view=AdminPosts/>
-                                        <Route path="posts/new" view=AdminPostNew/>
+
+                                        // Posts routes
+                                        <Route path="posts" view=AdminPostsView/>
+                                        <Route path="posts/new" view=AdminPostNewView/>
+
+                                        // Tags routes
+                                        <Route path="tags" view=AdminTagsView/>
                                     </Route>
 
                                     <Route path="/rs-admin/login" view=AdminLoginView/>

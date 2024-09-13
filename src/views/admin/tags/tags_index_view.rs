@@ -1,26 +1,27 @@
 use leptos::*;
 
-use crate::components::admin::header_content::{ButtonProps, HeaderContent};
 use crate::{
-    services::admin::api::posts::get_posts, utils::add_class::add_class,
+    components::admin::header_content::{ButtonProps, HeaderContent},
+    services::admin::api::tags::get_tags,
+    utils::add_class::add_class,
 };
 
 #[component]
-pub fn AdminPostsView() -> impl IntoView {
-    add_class("body", "posts");
+pub fn AdminTagsView() -> impl IntoView {
+    add_class("body", "tags");
 
-    let posts = create_resource(|| (), |_| async { get_posts().await });
+    let tags = create_resource(|| (), |_| async { get_tags().await });
 
     view! {
         <HeaderContent
-            title="Posts"
+            title="Tags"
             button=ButtonProps {
-                text: "Add new post",
-                url: "/rs-admin/posts/new",
+                text: "Add new tags",
+                url: "/rs-admin/tags/new",
             }
         />
 
-        <Suspense fallback=move || view! { <p>"Loading posts..."</p> }>
+        <Suspense fallback=move || view! { <p>"Loading tags..."</p> }>
             <table class="table">
                 <thead>
                     <tr>
@@ -33,19 +34,19 @@ pub fn AdminPostsView() -> impl IntoView {
                             />
                         </th>
                         <th scope="col">#</th>
-                        <th scope="col">Title</th>
-                        <th scope="col">Content</th>
-                        <th scope="col">Author</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Slug</th>
+                        <th scope="col">Description</th>
                     </tr>
                 </thead>
                 <tbody>
 
                     {move || {
-                        match posts.get() {
-                            Some(Ok(posts)) => {
+                        match tags.get() {
+                            Some(Ok(tags)) => {
                                 view! {
                                     <>
-                                        {posts
+                                        {tags
                                             .iter()
                                             .map(|post| {
                                                 view! {
@@ -61,12 +62,14 @@ pub fn AdminPostsView() -> impl IntoView {
                                                         <td>{post.id}</td>
                                                         <td>
                                                             <a href=format!(
-                                                                "/rs-admin/posts/{}/edit",
+                                                                "/rs-admin/tags/{}/edit",
                                                                 post.id,
-                                                            )>{&post.title}</a>
+                                                            )>{&post.name}</a>
                                                         </td>
-                                                        <td>{&post.content}</td>
-                                                        <td>{post.author_id}</td>
+                                                        <td>{&post.slug}</td>
+                                                        <td>
+                                                            {<std::string::String as Clone>::clone(&post.description)}
+                                                        </td>
                                                     </tr>
                                                 }
                                             })
@@ -78,7 +81,7 @@ pub fn AdminPostsView() -> impl IntoView {
                             Some(Err(err)) => {
                                 view! {
                                     <tr>
-                                        <td colspan="4">{"Failed to load posts: "} {err}</td>
+                                        <td colspan="4">{"Failed to load tags: "} {err}</td>
                                     </tr>
                                 }
                                     .into_view()

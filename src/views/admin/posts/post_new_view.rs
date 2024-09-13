@@ -13,7 +13,7 @@ use crate::structs::admin::posts::{
 use crate::utils::add_class::add_class;
 
 #[component]
-pub fn AdminPostNew() -> impl IntoView {
+pub fn AdminPostNewView() -> impl IntoView {
     add_class("body", "post-new");
 
     let (title, set_title) = create_signal(String::new());
