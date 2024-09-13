@@ -43,26 +43,24 @@ pub fn App() -> impl IntoView {
                     <div class="row">
                         <div class="col">
                             <Routes>
-                                <Routes>
 
-                                    // Admin routes
-                                    <Route path="/rs-admin" view=AdminLayoutView>
-                                        <Route path="" view=AdminDashboardView/>
+                                // Admin routes
+                                <Route path="/rs-admin" view=AdminLayoutView>
+                                    <Route path="" view=AdminDashboardView/>
 
-                                        // Posts routes
-                                        <Route path="posts" view=AdminPostsView/>
-                                        <Route path="posts/new" view=AdminPostNewView/>
+                                    // Posts routes
+                                    <Route path="posts" view=AdminPostsView/>
+                                    <Route path="posts/new" view=AdminPostNewView/>
 
-                                        // Tags routes
-                                        <Route path="tags" view=AdminTagsView/>
-                                    </Route>
+                                    // Tags routes
+                                    <Route path="tags" view=AdminTagsView/>
+                                </Route>
 
-                                    <Route path="/rs-admin/login" view=AdminLoginView/>
+                                <Route path="/rs-admin/login" view=AdminLoginView/>
 
-                                    // Front routes
-                                    <Route path="/" view=FrontHomeView/>
+                                // Front routes
+                                <Route path="/" view=FrontHomeView/>
 
-                                </Routes>
                             </Routes>
                         </div>
                     </div>
