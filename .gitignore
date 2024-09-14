@@ -19,5 +19,5 @@ playwright/.cache/
 /.idea/rustpress_view.iml
 /.idea/vcs.xml
 /.idea/workspace.xml
-.ps1
-.txt
+*.ps1
+*.txt
