@@ -18,23 +18,7 @@ pub fn FrontHomeView() -> impl IntoView {
                 match posts.get() {
                     Some(Ok(posts)) => {
                         let mut handlebars = Handlebars::new();
-                        let template = r#"
-                        <!DOCTYPE html>
-                        <html lang="en">
-                        <head>
-                            <meta charset="UTF-8">
-                            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                            <title>{{title}}</title>
-                        </head>
-                        <body class="homepage">
-                            <h1>{{title}}</h1>
-                            <ul>
-                                {{#each posts}}
-                                <li>{{this.title}} - {{this.content}}</li>
-                                {{/each}}
-                            </ul>
-                        </body>
-                        </html>"#;
+                        let template = include_str!("../../themes/Default/home.hbs");
                         handlebars
                             .register_template_string("home", template)
                             .expect("Template string could not be loaded");
