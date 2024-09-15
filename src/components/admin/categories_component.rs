@@ -1,8 +1,9 @@
+use leptos::*;
+
 use crate::{
     components::front::loading_component::LoadingComponent,
     services::admin::api::categories_api::get_categories,
 };
-use leptos::*;
 
 #[component]
 pub fn CategoriesComponent(
