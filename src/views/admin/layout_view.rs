@@ -2,8 +2,10 @@ use leptos::*;
 use leptos_router::*;
 
 use crate::{
-    components::admin::{admin_bar::AdminBar, admin_menu::AdminMenu},
-    utils::add_class::add_class,
+    components::admin::{
+        admin_bar_component::AdminBar, admin_menu_component::AdminMenu,
+    },
+    utils::add_class_util::add_class,
 };
 
 #[component]

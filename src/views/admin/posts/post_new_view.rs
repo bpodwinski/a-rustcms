@@ -5,13 +5,13 @@ use leptos::*;
 use strum::IntoEnumIterator;
 use web_sys::SubmitEvent;
 
-use crate::components::admin::categories::CategoriesComponent;
-use crate::components::admin::header_content::HeaderContent;
-use crate::services::admin::api::posts::add_post;
-use crate::structs::admin::posts::{
+use crate::components::admin::categories_component::CategoriesComponent;
+use crate::components::admin::header_content_component::HeaderContent;
+use crate::models::admin::posts_model::{
     PostNewStruct, PostRequest, PostStatusEnum,
 };
-use crate::utils::add_class::add_class;
+use crate::services::admin::api::posts_api::add_post;
+use crate::utils::add_class_util::add_class;
 
 #[component]
 pub fn AdminPostNewView() -> impl IntoView {

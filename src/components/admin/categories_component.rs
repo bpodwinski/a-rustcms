@@ -1,6 +1,6 @@
 use crate::{
     components::front::loading_component::LoadingComponent,
-    services::admin::api::categories::get_categories,
+    services::admin::api::categories_api::get_categories,
 };
 use leptos::*;
 

@@ -34,16 +34,29 @@ pub fn add_class(selector: &str, class_name: &str) {
                 let selector = selector.clone();
                 move || match document().query_selector(&selector) {
                     Ok(Some(element)) => {
-                        if let Err(err) = element.class_list().remove_1(&class_name) {
-                            eprintln!("Failed to remove class '{}': {:?}", class_name, err);
+                        if let Err(err) =
+                            element.class_list().remove_1(&class_name)
+                        {
+                            eprintln!(
+                                "Failed to remove class '{}': {:?}",
+                                class_name, err
+                            );
                         }
                     }
-                    Ok(None) => eprintln!("Element not found for selector '{}'", selector),
-                    Err(err) => eprintln!("Failed to query selector '{}': {:?}", selector, err),
+                    Ok(None) => eprintln!(
+                        "Element not found for selector '{}'",
+                        selector
+                    ),
+                    Err(err) => eprintln!(
+                        "Failed to query selector '{}': {:?}",
+                        selector, err
+                    ),
                 }
             });
         }
         Ok(None) => eprintln!("Element not found for selector '{}'", selector),
-        Err(err) => eprintln!("Failed to query selector '{}': {:?}", selector, err),
+        Err(err) => {
+            eprintln!("Failed to query selector '{}': {:?}", selector, err)
+        }
     });
 }

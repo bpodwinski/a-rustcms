@@ -1,4 +1,4 @@
-pub mod admin_bar;
-pub mod admin_menu;
-pub mod categories;
-pub mod header_content;
+pub mod admin_bar_component;
+pub mod admin_menu_component;
+pub mod categories_component;
+pub mod header_content_component;

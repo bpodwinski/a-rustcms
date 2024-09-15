@@ -1,9 +1,12 @@
 use leptos::*;
 
-use crate::components::admin::header_content::{ButtonProps, HeaderContent};
+use crate::components::admin::header_content_component::{
+    ButtonProps, HeaderContent,
+};
 use crate::components::front::loading_component::LoadingComponent;
 use crate::{
-    services::admin::api::posts::get_posts, utils::add_class::add_class,
+    services::admin::api::posts_api::get_posts,
+    utils::add_class_util::add_class,
 };
 
 #[component]

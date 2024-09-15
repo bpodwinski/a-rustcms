@@ -1,3 +1,3 @@
-pub mod categories;
-pub mod posts;
-pub mod tags;
+pub mod categories_api;
+pub mod posts_api;
+pub mod tags_api;

@@ -1,8 +1,8 @@
 use ev::SubmitEvent;
 use leptos::*;
 
-use crate::components::admin::header_content::HeaderContent;
-use crate::utils::add_class::add_class;
+use crate::components::admin::header_content_component::HeaderContent;
+use crate::utils::add_class_util::add_class;
 
 #[component]
 pub fn AdminLoginView() -> impl IntoView {

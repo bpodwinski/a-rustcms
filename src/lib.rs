@@ -3,8 +3,8 @@ pub mod components;
 pub mod error_template;
 #[cfg(feature = "ssr")]
 pub mod fileserv;
+pub mod models;
 pub mod services;
-pub mod structs;
 pub mod utils;
 pub mod views;
 

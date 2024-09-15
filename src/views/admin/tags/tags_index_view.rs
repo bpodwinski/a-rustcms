@@ -1,9 +1,9 @@
 use leptos::*;
 
 use crate::{
-    components::admin::header_content::{ButtonProps, HeaderContent},
-    services::admin::api::tags::get_tags,
-    utils::add_class::add_class,
+    components::admin::header_content_component::{ButtonProps, HeaderContent},
+    services::admin::api::tags_api::get_tags,
+    utils::add_class_util::add_class,
 };
 
 #[component]

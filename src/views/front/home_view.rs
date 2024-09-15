@@ -5,7 +5,8 @@ use std::collections::HashMap;
 
 use crate::{
     components::front::loading_component::LoadingComponent,
-    services::admin::api::posts::get_posts, utils::add_class::add_class,
+    services::admin::api::posts_api::get_posts,
+    utils::add_class_util::add_class,
 };
 
 #[component]

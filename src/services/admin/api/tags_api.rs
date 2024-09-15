@@ -1,8 +1,8 @@
 use reqwest::{Client, Response};
 
-use crate::structs::admin::categories::{CategoryNewStruct, CategoryStruct};
+use crate::models::admin::tags_model::{TagNewStruct, TagStruct};
 
-const BASE_URL: &str = "http://127.0.0.1:6988/api/v1/categories";
+const BASE_URL: &str = "http://127.0.0.1:6988/api/v1/tags";
 
 async fn handle_response<T>(response: Response) -> Result<T, String>
 where
@@ -11,7 +11,7 @@ where
     response.json::<T>().await.map_err(|e| e.to_string())
 }
 
-pub async fn get_categories() -> Result<Vec<CategoryStruct>, String> {
+pub async fn get_tags() -> Result<Vec<TagStruct>, String> {
     let client = Client::new();
 
     let response = client
@@ -25,9 +25,7 @@ pub async fn get_categories() -> Result<Vec<CategoryStruct>, String> {
     handle_response(response).await
 }
 
-pub async fn get_category_by_id(
-    post_id: u32,
-) -> Result<CategoryStruct, String> {
+pub async fn get_tag_by_id(post_id: u32) -> Result<TagStruct, String> {
     let client = Client::new();
     let url = format!("{}/{}", BASE_URL, post_id);
 
@@ -42,9 +40,7 @@ pub async fn get_category_by_id(
     handle_response(response).await
 }
 
-pub async fn add_category(
-    tag: CategoryNewStruct,
-) -> Result<CategoryStruct, String> {
+pub async fn add_post(tag: TagNewStruct) -> Result<TagStruct, String> {
     let client = Client::new();
 
     let response = client

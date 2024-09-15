@@ -1,8 +1,10 @@
 use reqwest::{Client, Response};
 
-use crate::structs::admin::posts::{PostNewStruct, PostRequest, PostStruct};
+use crate::models::admin::categories_model::{
+    CategoryNewStruct, CategoryStruct,
+};
 
-const BASE_URL: &str = "http://127.0.0.1:6988/api/v1/posts";
+const BASE_URL: &str = "http://127.0.0.1:6988/api/v1/categories";
 
 async fn handle_response<T>(response: Response) -> Result<T, String>
 where
@@ -11,7 +13,7 @@ where
     response.json::<T>().await.map_err(|e| e.to_string())
 }
 
-pub async fn get_posts() -> Result<Vec<PostStruct>, String> {
+pub async fn get_categories() -> Result<Vec<CategoryStruct>, String> {
     let client = Client::new();
 
     let response = client
@@ -25,7 +27,9 @@ pub async fn get_posts() -> Result<Vec<PostStruct>, String> {
     handle_response(response).await
 }
 
-pub async fn get_post_by_id(post_id: u32) -> Result<PostStruct, String> {
+pub async fn get_category_by_id(
+    post_id: u32,
+) -> Result<CategoryStruct, String> {
     let client = Client::new();
     let url = format!("{}/{}", BASE_URL, post_id);
 
@@ -40,31 +44,14 @@ pub async fn get_post_by_id(post_id: u32) -> Result<PostStruct, String> {
     handle_response(response).await
 }
 
-pub async fn add_post(post: PostRequest) -> Result<PostNewStruct, String> {
+pub async fn add_category(
+    tag: CategoryNewStruct,
+) -> Result<CategoryStruct, String> {
     let client = Client::new();
 
     let response = client
         .post(BASE_URL)
-        .json(&post)
-        .send()
-        .await
-        .map_err(|e| e.to_string())?
-        .error_for_status()
-        .map_err(|e| e.to_string())?;
-
-    handle_response(response).await
-}
-
-pub async fn update_post(
-    post_id: u32,
-    post: PostNewStruct,
-) -> Result<PostNewStruct, String> {
-    let client = Client::new();
-    let url = format!("{}/{}", BASE_URL, post_id);
-
-    let response = client
-        .put(&url)
-        .json(&post)
+        .json(&tag)
         .send()
         .await
         .map_err(|e| e.to_string())?
