@@ -3,16 +3,19 @@ use leptos::*;
 use serde_json::Value;
 use std::collections::HashMap;
 
-use crate::services::admin::api::posts::get_posts;
+use crate::{
+    components::front::loading_component::LoadingComponent,
+    services::admin::api::posts::get_posts, utils::add_class::add_class,
+};
 
 #[component]
 pub fn FrontHomeView() -> impl IntoView {
-    // Créer une ressource pour récupérer les posts de manière asynchrone
+    add_class("body", "home");
     let posts = create_resource(|| (), |_| async { get_posts().await });
 
     view! {
         <Suspense fallback=move || {
-            view! { <p>"Chargement des posts..."</p> }
+            view! { <LoadingComponent/> }
         }>
             {move || {
                 match posts.get() {

@@ -1,6 +1,7 @@
 use leptos::*;
 
 use crate::components::admin::header_content::{ButtonProps, HeaderContent};
+use crate::components::front::loading_component::LoadingComponent;
 use crate::{
     services::admin::api::posts::get_posts, utils::add_class::add_class,
 };
@@ -20,7 +21,7 @@ pub fn AdminPostsView() -> impl IntoView {
             }
         />
 
-        <Suspense fallback=move || view! { <p>"Loading posts..."</p> }>
+        <Suspense fallback=move || view! { <LoadingComponent/> }>
             <table class="table">
                 <thead>
                     <tr>

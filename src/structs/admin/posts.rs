@@ -39,7 +39,7 @@ pub struct PostNewStruct {
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct PostRequest {
     pub post: PostNewStruct,
-    pub categories_ids: Vec<i32>,
+    pub categories_ids: Vec<u32>,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]

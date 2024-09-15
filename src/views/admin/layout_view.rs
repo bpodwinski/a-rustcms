@@ -11,9 +11,19 @@ pub fn AdminLayoutView() -> impl IntoView {
     add_class("body", "admin");
 
     view! {
-        <AdminBar/>
-        <AdminMenu/>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col">
+                    <div class="wrapper content">
 
-        <Outlet/>
+                        <AdminBar/>
+                        <AdminMenu/>
+
+                        <Outlet/>
+
+                    </div>
+                </div>
+            </div>
+        </div>
     }
 }

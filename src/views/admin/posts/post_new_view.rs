@@ -5,6 +5,7 @@ use leptos::*;
 use strum::IntoEnumIterator;
 use web_sys::SubmitEvent;
 
+use crate::components::admin::categories::CategoriesComponent;
 use crate::components::admin::header_content::HeaderContent;
 use crate::services::admin::api::posts::add_post;
 use crate::structs::admin::posts::{
@@ -23,7 +24,7 @@ pub fn AdminPostNewView() -> impl IntoView {
     let (date_published, set_date_published) =
         create_signal(None as Option<NaiveDateTime>);
     let (categories_ids, set_categories_ids) =
-        create_signal(Vec::new() as Vec<i32>);
+        create_signal(Vec::new() as Vec<u32>);
 
     let on_submit = move |ev: SubmitEvent| {
         ev.prevent_default();
@@ -145,27 +146,10 @@ pub fn AdminPostNewView() -> impl IntoView {
                     />
                 </div>
 
-                <div class="mb-3">
-                    <h3 for="post-categories" class="form-label">
-                        Categories
-                    </h3>
-
-                    <input
-                        type="text"
-                        on:input=move |ev| {
-                            let categories_input = event_target_value(&ev);
-                            let ids: Vec<i32> = categories_input
-                                .split(',')
-                                .filter_map(|s| s.trim().parse::<i32>().ok())
-                                .collect();
-                            set_categories_ids.set(ids);
-                        }
-
-                        class="form-control"
-                        id="post-categories"
-                        placeholder="Enter category IDs separated by commas (e.g., 4, 6)"
-                    />
-                </div>
+                <CategoriesComponent
+                    categories_ids=categories_ids.into()
+                    set_categories_ids=set_categories_ids
+                />
 
             </div>
 
