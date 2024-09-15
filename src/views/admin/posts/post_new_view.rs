@@ -7,6 +7,7 @@ use web_sys::SubmitEvent;
 
 use crate::components::admin::categories_component::CategoriesComponent;
 use crate::components::admin::header_content_component::HeaderContent;
+use crate::components::admin::publish_component::PublishComponent;
 use crate::models::admin::posts_model::{
     PostNewStruct, PostRequest, PostStatusEnum,
 };
@@ -96,61 +97,16 @@ pub fn AdminPostNewView() -> impl IntoView {
             </div>
 
             <div class="col-lg-4 col-xl-3">
-                <div class="mb-3">
-                    <h3>Status & visibility</h3>
-
-                    {PostStatusEnum::iter()
-                        .map(|status_option| {
-                            let status_option_str = format!("{:?}", status_option);
-                            let status_option = Rc::new(status_option);
-                            let status_option_clone = Rc::clone(&status_option);
-                            let status_option_clone2 = Rc::clone(&status_option);
-                            view! {
-                                <div class="form-check">
-                                    <input
-                                        class="form-check-input"
-                                        type="radio"
-                                        name="post-status"
-                                        id=status_option_str.clone()
-                                        on:change=move |_| {
-                                            set_status.set((*status_option_clone).clone())
-                                        }
-
-                                        prop:checked=move || *status_option_clone2 == status.get()
-                                    />
-                                    <label class="form-check-label" for=status_option_str.clone()>
-                                        {status_option_str}
-                                    </label>
-                                </div>
-                            }
-                        })
-                        .collect::<Vec<_>>()}
-                </div>
-
-                <div class="mb-3">
-                    <h3 for="post-date-published" class="form-label">
-                        Date Published
-                    </h3>
-
-                    <input
-                        type="datetime-local"
-                        on:input=move |ev| {
-                            let date = event_target_value(&ev);
-                            let parsed_date = NaiveDateTime::parse_from_str(&date, "%Y-%m-%dT%H:%M")
-                                .ok();
-                            set_date_published.set(parsed_date);
-                        }
-
-                        class="form-control"
-                        id="post-date-published"
-                    />
-                </div>
+                <PublishComponent
+                    status=status.into()
+                    set_status=set_status
+                    set_date_published=set_date_published
+                />
 
                 <CategoriesComponent
                     categories_ids=categories_ids.into()
                     set_categories_ids=set_categories_ids
                 />
-
             </div>
 
         </div>

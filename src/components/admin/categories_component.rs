@@ -72,7 +72,13 @@ pub fn CategoriesComponent(
                         }
                     }
                     Some(None) => view! { <div>"Aucune catégorie trouvée."</div> },
-                    None => view! { <div>"Chargement des catégories..."</div> },
+                    None => {
+                        view! {
+                            <div>
+                                <LoadingComponent/>
+                            </div>
+                        }
+                    }
                 }}
 
             </Suspense>
