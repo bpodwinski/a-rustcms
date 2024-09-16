@@ -13,11 +13,11 @@
     ],
     "rust-analyzer.cargo.features": ["ssr"],
     "workbench.colorCustomizations": {
-      "activityBar.background": "#492828",
-      "activityBar.activeBackground": "#613333",
-      "titleBar.activeBackground": "#492828",
+      "activityBar.background": "#695205",
+      "activityBar.activeBackground": "#81700d",
+      "titleBar.activeBackground": "#695205",
       "editorRuler.foreground": "#ffffff1f",
-      "statusBar.background": "#492828"
+      "statusBar.background": "#695205"
     },
     "editor.rulers": [
       {

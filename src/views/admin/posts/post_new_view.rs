@@ -1,12 +1,10 @@
-use std::rc::Rc;
-
 use chrono::NaiveDateTime;
 use leptos::*;
-use strum::IntoEnumIterator;
 use web_sys::SubmitEvent;
 
 use crate::components::admin::categories_component::CategoriesComponent;
 use crate::components::admin::header_content_component::HeaderContent;
+use crate::components::admin::notification_component::ToastComponent;
 use crate::components::admin::publish_component::PublishComponent;
 use crate::models::admin::posts_model::{
     PostNewStruct, PostRequest, PostStatusEnum,
@@ -27,13 +25,19 @@ pub fn AdminPostNewView() -> impl IntoView {
     let (categories_ids, set_categories_ids) =
         create_signal(Vec::new() as Vec<u32>);
 
+    let (notification_message, set_notification_message) =
+        create_signal(String::new());
+    let (notification_type, set_notification_type) =
+        create_signal(String::new());
+    let (show_toast, set_show_toast) = create_signal(false);
+
     let on_submit = move |ev: SubmitEvent| {
         ev.prevent_default();
 
         let post = PostNewStruct {
             title: title.get().clone(),
             content: content.get().clone(),
-            slug: "test-123".to_string(),
+            slug: title.get().clone(),
             author_id: 1,
             status: status.get().clone(),
             date_published: date_published.get().clone(),
@@ -46,16 +50,39 @@ pub fn AdminPostNewView() -> impl IntoView {
 
         log::info!("Submitting post: {:?}", &post_request);
 
+        // Appel API pour soumettre le post
         spawn_local(async move {
             match add_post(post_request).await {
-                Ok(_) => log::info!("Post submitted successfully"),
-                Err(e) => log::error!("Failed to submit post: {}", e),
+                Ok(created_post) => {
+                    // Notification de succès avec le message du toast
+                    set_notification_message.set(format!(
+                        "Post '{}' created successfully! (HTTP {})",
+                        created_post.title,
+                        created_post.http_code.unwrap_or_default()
+                    ));
+                    set_notification_type.set("success".to_string());
+                    set_show_toast.set(true); // Afficher le toast
+                }
+                Err(e) => {
+                    // Notification d'erreur
+                    set_notification_message.set(format!("Error: {}", e));
+                    set_notification_type.set("error".to_string());
+                    set_show_toast.set(true); // Afficher le toast
+                }
             }
         });
     };
 
     view! {
         <HeaderContent title="Add new post"/>
+
+        // Section des notifications
+        <ToastComponent
+            message=notification_message.into()
+            toast_type=notification_type.into()
+            show=show_toast.into()
+            set_show=set_show_toast
+        />
 
         <div class="row">
 

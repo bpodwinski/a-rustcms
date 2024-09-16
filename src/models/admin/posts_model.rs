@@ -15,6 +15,7 @@ pub enum PostStatusEnum {
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct PostStruct {
+    pub http_code: Option<u16>,
     pub id: u32,
     pub title: String,
     pub content: String,
