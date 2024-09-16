@@ -16,7 +16,7 @@ pub fn AdminLayoutView() -> impl IntoView {
         <div class="container-fluid">
             <div class="row">
                 <div class="col">
-                    <div class="wrapper content">
+                    <div class="wrapper content mt-3">
 
                         <AdminBar/>
                         <AdminMenu/>

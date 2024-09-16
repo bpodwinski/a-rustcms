@@ -1,4 +1,5 @@
 use crate::components::admin::categories_component::CategoriesComponent;
+use crate::components::admin::header_content_component::HeaderContent;
 use crate::components::admin::publish_component::PublishComponent;
 use crate::models::admin::posts_model::{
     PostNewStruct, PostRequest, PostStatusEnum,
@@ -9,6 +10,7 @@ use leptos::*;
 use web_sys::SubmitEvent;
 
 pub struct AdminNewContentView {
+    pub name: String,
     pub title: RwSignal<String>,
     pub content: RwSignal<String>,
     pub categories_ids: RwSignal<Vec<u32>>,
@@ -21,6 +23,7 @@ impl AdminNewContentView {
     // Constructeur pour un post
     pub fn new_post() -> Self {
         Self {
+            name: "Add new post".to_owned(),
             title: create_rw_signal(String::new()),
             content: create_rw_signal(String::new()),
             categories_ids: create_rw_signal(Vec::new()),
@@ -33,6 +36,7 @@ impl AdminNewContentView {
     // Constructeur pour une page
     pub fn new_page() -> Self {
         Self {
+            name: String::new(),
             title: create_rw_signal(String::new()),
             content: create_rw_signal(String::new()),
             categories_ids: create_rw_signal(Vec::new()),
@@ -108,80 +112,87 @@ impl AdminNewContentView {
 
         view! {
             <div class="row">
-                <div class="col-lg-8 col-xl-9">
-                    <form on:submit=move |ev: SubmitEvent| {
-                        ev.prevent_default();
-                        let title = title.clone();
-                        let content = content.clone();
-                        let status = status.clone();
-                        let categories_ids = categories_ids.clone();
-                        let set_notification_message = set_notification_message.clone();
-                        let set_notification_type = set_notification_type.clone();
-                        let set_show_toast = set_show_toast.clone();
-                        spawn_local(async move {
-                            let post = PostNewStruct {
-                                title: title.get(),
-                                content: content.get(),
-                                slug: title.get(),
-                                author_id: 1,
-                                status,
-                                date_published: None,
-                            };
-                            let post_request = PostRequest {
-                                post,
-                                categories_ids: categories_ids.clone(),
-                            };
-                            match add_post(post_request).await {
-                                Ok(created_post) => {
-                                    set_notification_message
-                                        .set(
-                                            format!(
-                                                "Content '{}' created successfully! (HTTP {})",
-                                                created_post.title,
-                                                created_post.http_code.unwrap_or_default(),
-                                            ),
-                                        );
-                                    set_notification_type.set("success".to_string());
-                                    set_show_toast.set(true);
-                                }
-                                Err(e) => {
-                                    set_notification_message.set(format!("Error: {}", e));
-                                    set_notification_type.set("error".to_string());
-                                    set_show_toast.set(true);
-                                }
-                            }
-                        });
-                    }>
 
-                        <div>
-                            <label for="post-title" class="form-label">
-                                "Title"
-                            </label>
+                <div class="mb-3 d-flex align-items-center justify-content-start">
+                    <HeaderContent title=&self.name/>
+                    <button type="submit" form="post-form" class="btn btn-primary ms-3">
+                        "Publish"
+                    </button>
+                </div>
+
+                <div class="col-lg-8 col-xl-9">
+
+                    <form
+                        id="post-form"
+                        on:submit=move |ev: SubmitEvent| {
+                            ev.prevent_default();
+                            let title = title.clone();
+                            let content = content.clone();
+                            let status = status.clone();
+                            let categories_ids = categories_ids.clone();
+                            let set_notification_message = set_notification_message.clone();
+                            let set_notification_type = set_notification_type.clone();
+                            let set_show_toast = set_show_toast.clone();
+                            spawn_local(async move {
+                                let post = PostNewStruct {
+                                    title: title.get(),
+                                    content: content.get(),
+                                    slug: title.get(),
+                                    author_id: 1,
+                                    status,
+                                    date_published: None,
+                                };
+                                let post_request = PostRequest {
+                                    post,
+                                    categories_ids: categories_ids.clone(),
+                                };
+                                match add_post(post_request).await {
+                                    Ok(created_post) => {
+                                        set_notification_message
+                                            .set(
+                                                format!(
+                                                    "Content '{}' created successfully! (HTTP {})",
+                                                    created_post.title,
+                                                    created_post.http_code.unwrap_or_default(),
+                                                ),
+                                            );
+                                        set_notification_type.set("success".to_string());
+                                        set_show_toast.set(true);
+                                    }
+                                    Err(e) => {
+                                        set_notification_message.set(format!("Error: {}", e));
+                                        set_notification_type.set("error".to_string());
+                                        set_show_toast.set(true);
+                                    }
+                                }
+                            });
+                        }
+                    >
+
+                        <div class="form-floating mb-3">
                             <input
                                 type="text"
                                 on:input=move |ev| set_title.set(event_target_value(&ev))
                                 prop:value=title
                                 class="form-control"
                                 id="post-title"
+                                placeholder="Add title"
                             />
+                            <label for="post-title">"Add title"</label>
                         </div>
 
-                        <div>
-                            <label for="post-content" class="form-label">
-                                "Content"
-                            </label>
+                        <div class="form-floating mb-3">
                             <textarea
                                 on:input=move |ev| set_content.set(event_target_value(&ev))
                                 prop:value=content
                                 class="form-control"
                                 id="post-content"
-                                rows="6"
+                                placeholder="Add content"
+                                style="height: 200px"
                             ></textarea>
+                            <label for="post-content">"Add content"</label>
                         </div>
 
-                        <button type="submit" class="btn btn-primary">
-                            "Submit"
-                        </button>
                     </form>
                 </div>
 

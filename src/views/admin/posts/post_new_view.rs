@@ -1,10 +1,7 @@
 use leptos::*;
 
 use crate::{
-    components::admin::{
-        header_content_component::HeaderContent,
-        notification_component::ToastComponent,
-    },
+    components::admin::notification_component::ToastComponent,
     constructors::admin_new_content_view::AdminNewContentView,
     utils::add_class_util::add_class,
 };
@@ -24,9 +21,6 @@ pub fn AdminPostNewView() -> impl IntoView {
     let (show_toast, set_show_toast) = create_signal(false);
 
     view! {
-        <HeaderContent title="Add new post"/>
-
-        // Composant de notification (Toast)
         <ToastComponent
             message=notification_message.into()
             toast_type=notification_type.into()
@@ -34,7 +28,6 @@ pub fn AdminPostNewView() -> impl IntoView {
             set_show=set_show_toast
         />
 
-        // Rendu du formulaire à partir de ContentView
         {content_view
             .render(
                 content_view.title.write_only(),

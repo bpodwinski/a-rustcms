@@ -32,42 +32,50 @@ pub fn CategoriesComponent(
     };
 
     view! {
-        <div class="categories-component mb-3">
-            <h3 for="post-categories" class="form-label">
-                Categories
-            </h3>
+        <div class="categories-component card mb-5">
+
+            <div class="card-header">
+                <h3>Categories</h3>
+            </div>
+
             <Suspense fallback=move || {
-                view! { <LoadingComponent/> }
+                view! {
+                    <div>
+                        <LoadingComponent/>
+                    </div>
+                }
             }>
                 // Affichage en fonction des données récupérées
                 {move || match categories.get() {
                     Some(Some(categories)) => {
                         view! {
-                            <div class="form-check-group">
-                                {categories
-                                    .iter()
-                                    .map(|category| {
-                                        let category_id = category.id;
-                                        let category_name = category.name.clone();
-                                        let is_checked = categories_ids
-                                            .get()
-                                            .contains(&category_id);
-                                        view! {
-                                            <div class="form-check">
-                                                <input
-                                                    class="form-check-input"
-                                                    type="checkbox"
-                                                    id=category.id.clone()
-                                                    on:change=move |_| toggle_category(category_id)
-                                                    prop:checked=is_checked
-                                                />
-                                                <label class="form-check-label" for=category.id.clone()>
-                                                    {category_name}
-                                                </label>
-                                            </div>
-                                        }
-                                    })
-                                    .collect_view()}
+                            <div class="card-body">
+                                <div class="form-check-group">
+                                    {categories
+                                        .iter()
+                                        .map(|category| {
+                                            let category_id = category.id;
+                                            let category_name = category.name.clone();
+                                            let is_checked = categories_ids
+                                                .get()
+                                                .contains(&category_id);
+                                            view! {
+                                                <div class="form-check">
+                                                    <input
+                                                        class="form-check-input"
+                                                        type="checkbox"
+                                                        id=category.id.clone()
+                                                        on:change=move |_| toggle_category(category_id)
+                                                        prop:checked=is_checked
+                                                    />
+                                                    <label class="form-check-label" for=category.id.clone()>
+                                                        {category_name}
+                                                    </label>
+                                                </div>
+                                            }
+                                        })
+                                        .collect_view()}
+                                </div>
                             </div>
                         }
                     }
