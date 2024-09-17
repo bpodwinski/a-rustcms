@@ -1,7 +1,7 @@
 use reqwest::{Client, Response};
 
 use crate::models::admin::posts_model::{
-    PostNewStruct, PostRequest, PostStruct,
+    PostNewStruct, PostRequest, PostStruct, PostsIds,
 };
 
 const BASE_URL: &str = "http://127.0.0.1:6988/api/v1/posts";
@@ -90,4 +90,25 @@ pub async fn update_post(
         .map_err(|e| e.to_string())?;
 
     handle_response(response).await
+}
+
+pub async fn delete_posts(posts_ids: PostsIds) -> Result<PostsIds, String> {
+    let client = Client::new();
+
+    // Envoyer la requête POST
+    let response = client
+        .delete(BASE_URL)
+        .json(&posts_ids)
+        .send()
+        .await
+        .map_err(|e| format!("Failed to send request: {}", e))?;
+
+    if response.status().is_success() {
+        response
+            .json::<PostsIds>()
+            .await
+            .map_err(|e| format!("Failed to parse response: {}", e))
+    } else {
+        Err(format!("API returned an error: {}", response.status()))
+    }
 }

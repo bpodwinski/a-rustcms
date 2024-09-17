@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 use strum_macros::{Display, EnumIter};
 
 #[derive(
-    Serialize, Deserialize, Clone, Debug, EnumIter, Display, PartialEq,
+    Serialize, Deserialize, Clone, Debug, EnumIter, Display, PartialEq, Eq, Hash,
 )]
 pub enum PostStatusEnum {
     Draft,
@@ -13,7 +13,7 @@ pub enum PostStatusEnum {
     Published,
 }
 
-#[derive(Serialize, Deserialize, Clone, Debug)]
+#[derive(Serialize, Deserialize, Clone, PartialEq, Eq, Hash, Debug)]
 pub struct PostStruct {
     pub http_code: Option<u16>,
     pub id: u32,
@@ -43,9 +43,14 @@ pub struct PostRequest {
     pub categories_ids: Vec<u32>,
 }
 
-#[derive(Serialize, Deserialize, Clone, Debug)]
+#[derive(Serialize, Deserialize, Clone, PartialEq, Eq, Hash, Debug)]
 pub struct Category {
     pub id: u32,
     pub name: String,
     pub description: String,
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug)]
+pub struct PostsIds {
+    pub ids: Vec<u32>,
 }
