@@ -4,7 +4,7 @@ use leptos_router::A;
 #[component]
 pub fn AdminBar() -> impl IntoView {
     view! {
-        <nav class="admin-bar navbar fixed-top navbar-expand-lg">
+        <nav class="admin-bar navbar navbar-expand-lg">
             <div class="container-fluid">
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav">

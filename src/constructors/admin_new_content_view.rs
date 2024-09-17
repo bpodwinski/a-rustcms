@@ -111,11 +111,15 @@ impl AdminNewContentView {
         let status = self.status.get_untracked();
 
         view! {
-            <div class="row">
+            <div class="row new-content">
 
                 <div class="mb-3 d-flex align-items-center justify-content-start">
                     <HeaderContent title=&self.name/>
-                    <button type="submit" form="post-form" class="btn btn-primary ms-3">
+                    <button
+                        type="submit"
+                        form=format!("{}-form", &self.name)
+                        class="btn btn-primary ms-3"
+                    >
                         "Publish"
                     </button>
                 </div>
@@ -123,7 +127,7 @@ impl AdminNewContentView {
                 <div class="col-lg-8 col-xl-9">
 
                     <form
-                        id="post-form"
+                        id=format!("{}-form", &self.name)
                         on:submit=move |ev: SubmitEvent| {
                             ev.prevent_default();
                             let title = title.clone();

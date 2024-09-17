@@ -4,7 +4,7 @@ use leptos_router::*;
 #[component]
 pub fn AdminMenu() -> impl IntoView {
     view! {
-        <nav class="admin-menu">
+        <nav>
             <ul class="nav flex-column">
                 <li class="nav-item">
                     <A class="nav-link" href="">

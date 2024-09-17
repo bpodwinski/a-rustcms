@@ -15,14 +15,13 @@ pub fn AdminLayoutView() -> impl IntoView {
     view! {
         <div class="container-fluid">
             <div class="row">
-                <div class="col">
-                    <div class="wrapper content mt-3">
-
-                        <AdminBar/>
-                        <AdminMenu/>
-
+                <div class="col-auto admin-menu">
+                    <AdminMenu/>
+                </div>
+                <div class="col admin-content">
+                    <AdminBar/>
+                    <div class="wrapper mt-3">
                         <Outlet/>
-
                     </div>
                 </div>
             </div>
