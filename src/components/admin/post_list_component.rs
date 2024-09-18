@@ -32,6 +32,27 @@ pub fn PostList(
         });
     };
 
+    // Signaux pour suivre la visibilité des colonnes
+    let (show_date_created, set_show_date_created) = create_signal(true);
+    let (show_author, set_show_author) = create_signal(true);
+    let (show_id, set_show_id) = create_signal(true);
+
+    let total_columns = 4;
+    // Calculer le nombre de colonnes actuellement visibles
+    let visible_columns = move || {
+        let mut count = 1; // Le titre est toujours visible
+        if show_date_created.get() {
+            count += 1;
+        }
+        if show_author.get() {
+            count += 1;
+        }
+        if show_id.get() {
+            count += 1;
+        }
+        count
+    };
+
     // Signal to track the current sorting column and order
     let sort_column = create_rw_signal(SortColumn::ID);
     let sort_order = create_rw_signal(SortOrder::Descending);
@@ -95,6 +116,7 @@ pub fn PostList(
                 <div class="content-list">
 
                     <div class="d-flex justify-content-end align-items-center w-100 my-2">
+
                         <div class="dropdown me-2">
                             <button
                                 class="btn btn-outline-primary dropdown-toggle"
@@ -102,24 +124,19 @@ pub fn PostList(
                                 data-bs-toggle="dropdown"
                                 aria-expanded="false"
                             >
-                                4/4 Columns
+                                {move || format!("{}/{} Columns", visible_columns(), total_columns)}
                             </button>
                             <ul class="dropdown-menu">
                                 <li>
                                     <div class="dropdown-item">
-                                        <div class="form-check">
+                                        <div class="form-check" onclick="event.stopPropagation();">
                                             <input
                                                 class="form-check-input"
                                                 type="checkbox"
-                                                value="title"
-                                                id="checkTitle"
-                                                onclick="event.stopPropagation();"
+                                                checked
+                                                disabled
                                             />
-                                            <label
-                                                class="form-check-label"
-                                                for="checkTitle"
-                                                onclick="event.stopPropagation();"
-                                            >
+                                            <label class="form-check-label" style="width: 100%;">
                                                 Title
                                             </label>
                                         </div>
@@ -127,18 +144,21 @@ pub fn PostList(
                                 </li>
                                 <li>
                                     <div class="dropdown-item">
-                                        <div class="form-check">
+                                        <div class="form-check" onclick="event.stopPropagation();">
                                             <input
                                                 class="form-check-input"
-                                                type="checkbox"
-                                                value="date_created"
                                                 id="checkDateCreated"
-                                                onclick="event.stopPropagation();"
+                                                type="checkbox"
+                                                checked=move || show_date_created.get()
+                                                on:change=move |_| {
+                                                    set_show_date_created.update(|v| *v = !*v)
+                                                }
                                             />
+
                                             <label
                                                 class="form-check-label"
                                                 for="checkDateCreated"
-                                                onclick="event.stopPropagation();"
+                                                style="width: 100%;"
                                             >
                                                 Date created
                                             </label>
@@ -147,18 +167,18 @@ pub fn PostList(
                                 </li>
                                 <li>
                                     <div class="dropdown-item">
-                                        <div class="form-check">
+                                        <div class="form-check" onclick="event.stopPropagation();">
                                             <input
                                                 class="form-check-input"
-                                                type="checkbox"
-                                                value="author"
                                                 id="checkAuthor"
-                                                onclick="event.stopPropagation();"
+                                                type="checkbox"
+                                                checked=move || show_author.get()
+                                                on:change=move |_| set_show_author.update(|v| *v = !*v)
                                             />
                                             <label
                                                 class="form-check-label"
                                                 for="checkAuthor"
-                                                onclick="event.stopPropagation();"
+                                                style="width: 100%;"
                                             >
                                                 Author
                                             </label>
@@ -167,20 +187,20 @@ pub fn PostList(
                                 </li>
                                 <li>
                                     <div class="dropdown-item">
-                                        <div class="form-check">
+                                        <div class="form-check" onclick="event.stopPropagation();">
                                             <input
                                                 class="form-check-input"
+                                                id="checkId"
                                                 type="checkbox"
-                                                value="category"
-                                                id="checkCategory"
-                                                onclick="event.stopPropagation();"
+                                                checked=move || show_id.get()
+                                                on:change=move |_| set_show_id.update(|v| *v = !*v)
                                             />
                                             <label
                                                 class="form-check-label"
-                                                for="checkCategory"
-                                                onclick="event.stopPropagation();"
+                                                for="checkId"
+                                                style="width: 100%;"
                                             >
-                                                Category
+                                                ID
                                             </label>
                                         </div>
                                     </div>
@@ -220,7 +240,7 @@ pub fn PostList(
                         </nav>
                     </div>
 
-                    <table class="table">
+                    <table class="table table-striped">
                         <thead>
                             <tr>
                                 <th scope="col">
@@ -264,68 +284,94 @@ pub fn PostList(
 
                                     </button>
                                 </th>
-                                <th scope="col">
-                                    <button
-                                        class="btn btn-dark"
-                                        on:click=move |_| toggle_sort(SortColumn::DateCreated)
-                                    >
-                                        Date created
-                                        {move || {
-                                            if sort_column.get() == SortColumn::DateCreated {
-                                                if sort_order.get() == SortOrder::Ascending {
-                                                    view! { <i class="bi bi-sort-down-alt ms-1"></i> }
-                                                } else {
-                                                    view! { <i class="bi bi-sort-up ms-1"></i> }
-                                                }
-                                            } else {
-                                                view! { <i class="bi bi-sort-up ms-1"></i> }
-                                            }
-                                        }}
 
-                                    </button>
-                                </th>
-                                <th scope="col">
-                                    <button
-                                        class="btn btn-dark"
-                                        on:click=move |_| toggle_sort(SortColumn::Author)
-                                    >
-                                        Author
-                                        {move || {
-                                            if sort_column.get() == SortColumn::Author {
-                                                if sort_order.get() == SortOrder::Ascending {
-                                                    view! { <i class="bi bi-sort-down-alt ms-1"></i> }
-                                                } else {
-                                                    view! { <i class="bi bi-sort-up ms-1"></i> }
-                                                }
-                                            } else {
-                                                view! { <i class="bi bi-sort-up ms-1"></i> }
-                                            }
-                                        }}
+                                {move || {
+                                    if show_date_created.get() {
+                                        view! {
+                                            <th scope="col">
+                                                <button
+                                                    class="btn btn-dark"
+                                                    on:click=move |_| toggle_sort(SortColumn::DateCreated)
+                                                >
+                                                    Date created
+                                                    {move || {
+                                                        if sort_column.get() == SortColumn::DateCreated {
+                                                            if sort_order.get() == SortOrder::Ascending {
+                                                                view! { <i class="bi bi-sort-down-alt ms-1"></i> }
+                                                            } else {
+                                                                view! { <i class="bi bi-sort-up ms-1"></i> }
+                                                            }
+                                                        } else {
+                                                            view! { <i class="bi bi-sort-up ms-1"></i> }
+                                                        }
+                                                    }}
 
-                                    </button>
-                                </th>
-                                <th scope="col">
-                                    <button
-                                        type="button"
-                                        class="btn btn-dark"
-                                        on:click=move |_| toggle_sort(SortColumn::ID)
-                                    >
-                                        ID
+                                                </button>
+                                            </th>
+                                        }
+                                    } else {
+                                        view! { <th></th> }
+                                    }
+                                }}
 
-                                        {move || {
-                                            if sort_column.get() == SortColumn::ID {
-                                                if sort_order.get() == SortOrder::Ascending {
-                                                    view! { <i class="bi bi-sort-down-alt ms-1"></i> }
-                                                } else {
-                                                    view! { <i class="bi bi-sort-up ms-1"></i> }
-                                                }
-                                            } else {
-                                                view! { <i class="bi bi-sort-up ms-1"></i> }
-                                            }
-                                        }}
+                                {move || {
+                                    if show_author.get() {
+                                        view! {
+                                            <th scope="col">
+                                                <button
+                                                    class="btn btn-dark"
+                                                    on:click=move |_| toggle_sort(SortColumn::Author)
+                                                >
+                                                    Author
+                                                    {move || {
+                                                        if sort_column.get() == SortColumn::Author {
+                                                            if sort_order.get() == SortOrder::Ascending {
+                                                                view! { <i class="bi bi-sort-down-alt ms-1"></i> }
+                                                            } else {
+                                                                view! { <i class="bi bi-sort-up ms-1"></i> }
+                                                            }
+                                                        } else {
+                                                            view! { <i class="bi bi-sort-up ms-1"></i> }
+                                                        }
+                                                    }}
 
-                                    </button>
-                                </th>
+                                                </button>
+                                            </th>
+                                        }
+                                    } else {
+                                        view! { <th></th> }
+                                    }
+                                }}
+
+                                {move || {
+                                    if show_id.get() {
+                                        view! {
+                                            <th scope="col">
+                                                <button
+                                                    class="btn btn-dark"
+                                                    on:click=move |_| toggle_sort(SortColumn::ID)
+                                                >
+                                                    ID
+                                                    {move || {
+                                                        if sort_column.get() == SortColumn::ID {
+                                                            if sort_order.get() == SortOrder::Ascending {
+                                                                view! { <i class="bi bi-sort-down-alt ms-1"></i> }
+                                                            } else {
+                                                                view! { <i class="bi bi-sort-up ms-1"></i> }
+                                                            }
+                                                        } else {
+                                                            view! { <i class="bi bi-sort-up ms-1"></i> }
+                                                        }
+                                                    }}
+
+                                                </button>
+                                            </th>
+                                        }
+                                    } else {
+                                        view! { <th></th> }
+                                    }
+                                }}
+
                             </tr>
                         </thead>
                         <tbody>
@@ -363,14 +409,38 @@ pub fn PostList(
                                                                     {format!("Slug: {}", &post.slug)}
                                                                 </div>
                                                             </td>
-                                                            <td>
-                                                                {post
-                                                                    .date_created
-                                                                    .format("%Y/%m/%d at %-I:%M %P")
-                                                                    .to_string()}
-                                                            </td>
-                                                            <td>{post.author_id}</td>
-                                                            <td>{post.id}</td>
+
+                                                            {move || {
+                                                                if show_date_created.get() {
+                                                                    view! {
+                                                                        <td>
+                                                                            {post
+                                                                                .date_created
+                                                                                .format("%Y/%m/%d at %-I:%M %P")
+                                                                                .to_string()}
+                                                                        </td>
+                                                                    }
+                                                                } else {
+                                                                    view! { <td></td> }
+                                                                }
+                                                            }}
+
+                                                            {move || {
+                                                                if show_author.get() {
+                                                                    view! { <td>{post.author_id}</td> }
+                                                                } else {
+                                                                    view! { <td></td> }
+                                                                }
+                                                            }}
+
+                                                            {move || {
+                                                                if show_id.get() {
+                                                                    view! { <td>{post.id}</td> }
+                                                                } else {
+                                                                    view! { <td></td> }
+                                                                }
+                                                            }}
+
                                                         </tr>
                                                     }
                                                 })
