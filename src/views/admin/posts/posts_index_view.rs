@@ -64,7 +64,7 @@ pub fn AdminPostsView() -> impl IntoView {
                                 view! {
                                     <div class="dropdown">
                                         <button
-                                            class="btn btn-outline-secondary dropdown-toggle"
+                                            class="btn btn-secondary dropdown-toggle"
                                             type="button"
                                             data-bs-toggle="dropdown"
                                             aria-expanded="false"
@@ -110,7 +110,7 @@ pub fn AdminPostsView() -> impl IntoView {
                                     <div>
                                         <button
                                             type="button"
-                                            class="btn btn-outline-secondary dropdown-toggle"
+                                            class="btn btn-secondary dropdown-toggle"
                                             disabled
                                         >
                                             Actions

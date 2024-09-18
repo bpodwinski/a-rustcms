@@ -1,4 +1,3 @@
-use chrono::NaiveDateTime;
 use leptos::*;
 use std::collections::HashSet;
 
@@ -190,8 +189,13 @@ pub fn PostList(
                                                 .into_iter()
                                                 .map(|post| {
                                                     let is_checked = selected_posts.get().contains(&post.id);
+                                                    let row_class = if is_checked {
+                                                        "table-active"
+                                                    } else {
+                                                        ""
+                                                    };
                                                     view! {
-                                                        <tr>
+                                                        <tr class=row_class>
                                                             <td>
                                                                 <input
                                                                     class="form-check-input"
@@ -235,6 +239,7 @@ pub fn PostList(
                             }}
 
                         </tbody>
+                        <caption>34 items</caption>
                     </table>
 
                     <nav aria-label="Page navigation example">
