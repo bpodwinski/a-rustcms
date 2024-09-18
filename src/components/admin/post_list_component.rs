@@ -3,6 +3,20 @@ use std::collections::HashSet;
 
 use crate::models::admin::posts_model::PostStruct;
 
+#[derive(Clone, Copy, PartialEq, Eq)]
+enum SortOrder {
+    Ascending,
+    Descending,
+}
+
+#[derive(Clone, Copy, PartialEq, Eq)]
+enum SortColumn {
+    Title,
+    DateCreated,
+    Author,
+    ID,
+}
+
 #[component]
 pub fn PostList(
     posts: Signal<Vec<PostStruct>>,
@@ -16,6 +30,63 @@ pub fn PostList(
                 selected.insert(post_id);
             }
         });
+    };
+
+    // Signal to track the current sorting column and order
+    let sort_column = create_rw_signal(SortColumn::ID);
+    let sort_order = create_rw_signal(SortOrder::Descending);
+
+    let sort_posts = move |posts: &mut Vec<PostStruct>| {
+        let column = sort_column.get();
+        let order = sort_order.get();
+
+        match column {
+            SortColumn::Title => {
+                if order == SortOrder::Ascending {
+                    posts.sort_by(|a, b| a.title.to_lowercase().cmp(&b.title.to_lowercase()));
+                } else {
+                    posts.sort_by(|a, b| b.title.to_lowercase().cmp(&a.title.to_lowercase()));
+                }
+            }
+            SortColumn::DateCreated => {
+                if order == SortOrder::Ascending {
+                    posts.sort_by(|a, b| a.date_created.cmp(&b.date_created));
+                } else {
+                    posts.sort_by(|a, b| b.date_created.cmp(&a.date_created));
+                }
+            }
+            SortColumn::Author => {
+                if order == SortOrder::Ascending {
+                    posts.sort_by(|a, b| a.author_id.cmp(&b.author_id));
+                } else {
+                    posts.sort_by(|a, b| b.author_id.cmp(&a.author_id));
+                }
+            }
+            SortColumn::ID => {
+                if order == SortOrder::Ascending {
+                    posts.sort_by(|a, b| a.id.cmp(&b.id));
+                } else {
+                    posts.sort_by(|a, b| b.id.cmp(&a.id));
+                }
+            }
+        }
+    };
+
+    let toggle_sort = move |column: SortColumn| {
+        if sort_column.get() == column {
+            // Toggle the sort order if the column is already selected
+            sort_order.update(|order| {
+                if *order == SortOrder::Ascending {
+                    *order = SortOrder::Descending;
+                } else {
+                    *order = SortOrder::Ascending;
+                }
+            });
+        } else {
+            // Set the new column and reset to ascending order
+            sort_column.set(column);
+            sort_order.set(SortOrder::Ascending);
+        }
     };
 
     view! {
@@ -173,15 +244,94 @@ pub fn PostList(
                                     />
 
                                 </th>
-                                <th scope="col">Title</th>
-                                <th scope="col">Date created</th>
-                                <th scope="col">Author</th>
-                                <th scope="col">#</th>
+                                <th scope="col">
+                                    <button
+                                        class="btn btn-dark"
+                                        on:click=move |_| toggle_sort(SortColumn::Title)
+                                    >
+                                        Title
+                                        {move || {
+                                            if sort_column.get() == SortColumn::Title {
+                                                if sort_order.get() == SortOrder::Ascending {
+                                                    view! { <i class="bi bi-sort-down-alt ms-1"></i> }
+                                                } else {
+                                                    view! { <i class="bi bi-sort-up ms-1"></i> }
+                                                }
+                                            } else {
+                                                view! { <i class="bi bi-sort-up ms-1"></i> }
+                                            }
+                                        }}
+
+                                    </button>
+                                </th>
+                                <th scope="col">
+                                    <button
+                                        class="btn btn-dark"
+                                        on:click=move |_| toggle_sort(SortColumn::DateCreated)
+                                    >
+                                        Date created
+                                        {move || {
+                                            if sort_column.get() == SortColumn::DateCreated {
+                                                if sort_order.get() == SortOrder::Ascending {
+                                                    view! { <i class="bi bi-sort-down-alt ms-1"></i> }
+                                                } else {
+                                                    view! { <i class="bi bi-sort-up ms-1"></i> }
+                                                }
+                                            } else {
+                                                view! { <i class="bi bi-sort-up ms-1"></i> }
+                                            }
+                                        }}
+
+                                    </button>
+                                </th>
+                                <th scope="col">
+                                    <button
+                                        class="btn btn-dark"
+                                        on:click=move |_| toggle_sort(SortColumn::Author)
+                                    >
+                                        Author
+                                        {move || {
+                                            if sort_column.get() == SortColumn::Author {
+                                                if sort_order.get() == SortOrder::Ascending {
+                                                    view! { <i class="bi bi-sort-down-alt ms-1"></i> }
+                                                } else {
+                                                    view! { <i class="bi bi-sort-up ms-1"></i> }
+                                                }
+                                            } else {
+                                                view! { <i class="bi bi-sort-up ms-1"></i> }
+                                            }
+                                        }}
+
+                                    </button>
+                                </th>
+                                <th scope="col">
+                                    <button
+                                        type="button"
+                                        class="btn btn-dark"
+                                        on:click=move |_| toggle_sort(SortColumn::ID)
+                                    >
+                                        ID
+
+                                        {move || {
+                                            if sort_column.get() == SortColumn::ID {
+                                                if sort_order.get() == SortOrder::Ascending {
+                                                    view! { <i class="bi bi-sort-down-alt ms-1"></i> }
+                                                } else {
+                                                    view! { <i class="bi bi-sort-up ms-1"></i> }
+                                                }
+                                            } else {
+                                                view! { <i class="bi bi-sort-up ms-1"></i> }
+                                            }
+                                        }}
+
+                                    </button>
+                                </th>
                             </tr>
                         </thead>
                         <tbody>
                             {move || {
-                                let post_list = posts.get();
+                                let mut post_list = posts.get();
+                                sort_posts(&mut post_list);
                                 if !post_list.is_empty() {
                                     view! {
                                         <>
@@ -229,6 +379,8 @@ pub fn PostList(
                                     }
                                 } else {
                                     view! {
+                                        // Sort posts based on the current sorting state
+
                                         <>
                                             <tr>
                                                 <td colspan="5">"No posts available"</td>
