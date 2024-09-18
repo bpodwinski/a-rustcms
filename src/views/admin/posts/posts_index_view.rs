@@ -1,10 +1,6 @@
 use std::collections::HashSet;
 
 use leptos::*;
-use wasm_bindgen::prelude::*;
-use wasm_bindgen::JsCast;
-use web_sys::js_sys;
-use web_sys::{window, HtmlElement};
 
 use crate::components::admin::header_content_component::{
     ButtonProps, HeaderContent,
@@ -58,27 +54,6 @@ pub fn AdminPostsView() -> impl IntoView {
     // Signal pour indiquer si le modal est ouvert
     let (is_modal_open, set_is_modal_open) = create_signal(false);
 
-    // Fonction pour initialiser et montrer la modal avec Bootstrap
-    let show_modal = move || {
-        if let Some(window) = window() {
-            if let Some(document) = window.document() {
-                if let Some(modal_element) =
-                    document.get_element_by_id("deleteModal")
-                {
-                    let modal_element: HtmlElement =
-                        modal_element.unchecked_into();
-                    // Appel de bootstrap.Modal via JsValue
-                    let js = r#"
-                        new bootstrap.Modal(document.getElementById('deleteModal')).show();
-                    "#;
-
-                    let _ =
-                        js_sys::Function::new_no_args(js).call0(&JsValue::NULL);
-                }
-            }
-        }
-    };
-
     // Gestion de la sélection/déselection des posts
     let toggle_post_selection = move |post_id: u32| {
         let mut selected = selected_posts.get().clone();
@@ -105,10 +80,12 @@ pub fn AdminPostsView() -> impl IntoView {
                 view! {
                     <div class="mt-3">
                         <button
+                            type="button"
                             class="btn btn-danger"
+                            data-bs-toggle="modal"
+                            data-bs-target="#deleteModal"
                             on:click=move |_| {
                                 set_is_modal_open.set(true);
-                                show_modal();
                             }
                         >
 
@@ -117,56 +94,49 @@ pub fn AdminPostsView() -> impl IntoView {
                     </div>
                 }
             } else {
-                view! {
-                    // Affiche la modal Bootstrap
-
-                    <div></div>
-                }
+                view! { <div></div> }
             }
         }}
 
+        // Modal Bootstrap
         <div
-            class="modal fade"
+            class=move || format!("modal fade {}", if is_modal_open.get() { "show" } else { "" })
             id="deleteModal"
             tabindex="-1"
+            style=move || if is_modal_open.get() { "display: block;" } else { "display: none;" }
             aria-labelledby="deleteModalLabel"
-            aria-hidden="true"
+            aria-hidden=move || (!is_modal_open.get()).to_string()
         >
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="deleteModalLabel">
-                            Confirm Deletion
-                        </h5>
+                        <h1 class="modal-title fs-5" id="deleteModalLabel">
+                            "Confirm Deletion"
+                        </h1>
                         <button
                             type="button"
                             class="btn-close"
-                            on:click=move |_| {
-                                set_is_modal_open.set(false);
-                                let hide_modal_js = r#"
-                                    $('#deleteModal').modal('hide');
-                                "#;
-                                let _ = js_sys::Function::new_no_args(hide_modal_js)
-                                    .call0(&JsValue::NULL);
-                            }
-
+                            data-bs-dismiss="modal"
+                            on:click=move |_| set_is_modal_open.set(false)
                             aria-label="Close"
                         ></button>
                     </div>
                     <div class="modal-body">
-                        <p>Are you sure you want to delete the selected posts?</p>
+                        <p>"Are you sure you want to delete the selected posts?"</p>
                     </div>
                     <div class="modal-footer">
                         <button
                             type="button"
                             class="btn btn-secondary"
+                            data-bs-dismiss="modal"
                             on:click=move |_| set_is_modal_open.set(false)
                         >
-                            Cancel
+                            "Cancel"
                         </button>
                         <button
                             type="button"
                             class="btn btn-danger"
+                            data-bs-dismiss="modal"
                             on:click=move |_| {
                                 let selected_ids = selected_posts.get_untracked();
                                 spawn_local(async move {
@@ -183,7 +153,7 @@ pub fn AdminPostsView() -> impl IntoView {
                             }
                         >
 
-                            Delete
+                            "Delete"
                         </button>
                     </div>
                 </div>
