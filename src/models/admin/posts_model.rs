@@ -1,3 +1,5 @@
+use std::collections::HashSet;
+
 use chrono::NaiveDateTime;
 use serde::{Deserialize, Serialize};
 use strum_macros::{Display, EnumIter};
@@ -52,5 +54,5 @@ pub struct Category {
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct PostsIds {
-    pub ids: Vec<u32>,
+    pub ids: HashSet<u32>,
 }
