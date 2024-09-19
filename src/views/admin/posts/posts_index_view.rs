@@ -6,7 +6,7 @@ use crate::{
     components::{
         admin::{
             header_content_component::HeaderContent, modal_component::*,
-            post_list_component::PostList,
+            posts_table::post_list_v2_component::PostListV2,
         },
         front::loading_component::LoadingComponent,
     },
@@ -227,7 +227,7 @@ pub fn AdminPostsView() -> impl IntoView {
             {move || {
                 if let Some(Ok(posts_vec)) = posts.get() {
                     set_loaded_posts.set(posts_vec);
-                    view! { <PostList posts=loaded_posts.into() selected_posts=selected_posts/> }
+                    view! { <PostListV2 posts=loaded_posts.into() selected_posts=selected_posts/> }
                 } else {
                     view! { <LoadingComponent/> }
                 }

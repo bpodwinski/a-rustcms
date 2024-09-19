@@ -1,3 +1,4 @@
+use ev::Event;
 use leptos::*;
 use std::collections::HashSet;
 
@@ -93,6 +94,44 @@ pub fn PostList(
         }
     };
 
+    // Gérer la sélection du tri via le `select`
+    let handle_sort_change = move |ev: Event| {
+        let value = event_target_value(&ev);
+        let (column, order) = match value.as_str() {
+            "TitleAscending" => (SortColumn::Title, SortOrder::Ascending),
+            "TitleDescending" => (SortColumn::Title, SortOrder::Descending),
+            "IdAscending" => (SortColumn::ID, SortOrder::Ascending),
+            "IdDescending" => (SortColumn::ID, SortOrder::Descending),
+            "DateCreatedAscending" => (SortColumn::DateCreated, SortOrder::Ascending),
+            "DateCreatedDescending" => (SortColumn::DateCreated, SortOrder::Descending),
+            "AuthorAscending" => (SortColumn::Author, SortOrder::Ascending),
+            "AuthorDescending" => (SortColumn::Author, SortOrder::Descending),
+            _ => (SortColumn::ID, SortOrder::Descending),
+        };
+        sort_column.set(column);
+        sort_order.set(order);
+    };
+
+    // Générer la valeur de tri actuelle pour le select
+    let current_sort_value = move || match sort_column.get() {
+        SortColumn::Title => match sort_order.get() {
+            SortOrder::Ascending => "TitleAscending".to_string(),
+            SortOrder::Descending => "TitleDescending".to_string(),
+        },
+        SortColumn::ID => match sort_order.get() {
+            SortOrder::Ascending => "IdAscending".to_string(),
+            SortOrder::Descending => "IdDescending".to_string(),
+        },
+        SortColumn::DateCreated => match sort_order.get() {
+            SortOrder::Ascending => "DateCreatedAscending".to_string(),
+            SortOrder::Descending => "DateCreatedDescending".to_string(),
+        },
+        SortColumn::Author => match sort_order.get() {
+            SortOrder::Ascending => "AuthorAscending".to_string(),
+            SortOrder::Descending => "AuthorDescending".to_string(),
+        },
+    };
+
     let toggle_sort = move |column: SortColumn| {
         if sort_column.get() == column {
             // Toggle the sort order if the column is already selected
@@ -114,6 +153,62 @@ pub fn PostList(
         <div class="card mb-3">
             <div class="card-body">
                 <div class="content-list">
+
+                    <select
+                        class="form-select me-2"
+                        aria-label="Sort Table By"
+                        style="width: fit-content;"
+                        on:change=move |ev| handle_sort_change(ev)
+                    >
+                        <option
+                            value="TitleAscending"
+                            selected=move || current_sort_value() == "TitleAscending"
+                        >
+                            Title ascending
+                        </option>
+                        <option
+                            value="TitleDescending"
+                            selected=move || current_sort_value() == "TitleDescending"
+                        >
+                            Title descending
+                        </option>
+                        <option
+                            value="DateCreatedAscending"
+                            selected=move || current_sort_value() == "DateCreatedAscending"
+                        >
+                            Date created ascending
+                        </option>
+                        <option
+                            value="DateCreatedDescending"
+                            selected=move || current_sort_value() == "DateCreatedDescending"
+                        >
+                            Date created descending
+                        </option>
+                        <option
+                            value="AuthorAscending"
+                            selected=move || current_sort_value() == "AuthorAscending"
+                        >
+                            Author ascending
+                        </option>
+                        <option
+                            value="AuthorDescending"
+                            selected=move || current_sort_value() == "AuthorDescending"
+                        >
+                            Author descending
+                        </option>
+                        <option
+                            value="IdAscending"
+                            selected=move || current_sort_value() == "IdAscending"
+                        >
+                            ID ascending
+                        </option>
+                        <option
+                            value="IdDescending"
+                            selected=move || current_sort_value() == "IdDescending"
+                        >
+                            ID descending
+                        </option>
+                    </select>
 
                     <div class="d-flex justify-content-end align-items-center w-100 my-2">
 
