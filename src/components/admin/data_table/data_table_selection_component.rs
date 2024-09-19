@@ -7,14 +7,14 @@ use crate::models::admin::posts_model::PostStruct;
 
 #[component]
 pub fn TotalItems(
-    posts: Signal<Vec<PostStruct>>,
-    selected_posts: RwSignal<HashSet<u32>>,
+    data: Signal<Vec<PostStruct>>,
+    selected_datas: RwSignal<HashSet<u32>>,
 ) -> impl IntoView {
     view! {
         <caption>
             {move || {
-                let total_items = posts.get().len();
-                let selected_items = selected_posts.get().len();
+                let total_items = data.get().len();
+                let selected_items = selected_datas.get().len();
                 format!("{} selected / {} items", selected_items, total_items)
             }}
 
@@ -24,29 +24,29 @@ pub fn TotalItems(
 
 #[component]
 pub fn SelectAllCheckbox(
-    posts: Signal<Vec<PostStruct>>,
-    selected_posts: RwSignal<HashSet<u32>>,
+    data: Signal<Vec<PostStruct>>,
+    selected_datas: RwSignal<HashSet<u32>>,
 ) -> impl IntoView {
     let is_all_selected = move || {
-        let all_ids = posts
+        let all_ids = data
             .get_untracked()
             .iter()
-            .map(|post| post.id)
+            .map(|data| data.id)
             .collect::<HashSet<_>>();
-        !all_ids.is_empty() && selected_posts.get_untracked().len() == all_ids.len()
+        !all_ids.is_empty() && selected_datas.get_untracked().len() == all_ids.len()
     };
 
     let toggle_select_all = move |ev: Event| {
         let checked = event_target_checked(&ev);
         if checked {
-            let all_ids = posts
+            let all_ids = data
                 .get_untracked()
                 .iter()
-                .map(|post| post.id)
+                .map(|data| data.id)
                 .collect::<HashSet<_>>();
-            selected_posts.set(all_ids);
+            selected_datas.set(all_ids);
         } else {
-            selected_posts.set(HashSet::new());
+            selected_datas.set(HashSet::new());
         }
     };
 
@@ -54,7 +54,7 @@ pub fn SelectAllCheckbox(
         <input
             class="form-check-input"
             type="checkbox"
-            aria-label="Select all posts"
+            aria-label="Select all datas"
             on:change=toggle_select_all
             prop:checked=is_all_selected()
         />
@@ -62,15 +62,15 @@ pub fn SelectAllCheckbox(
 }
 
 #[component]
-pub fn PostCheckbox(post_id: u32, selected_posts: RwSignal<HashSet<u32>>) -> impl IntoView {
-    let is_checked = selected_posts.get_untracked().contains(&post_id);
+pub fn Checkbox(data_id: u32, selected_datas: RwSignal<HashSet<u32>>) -> impl IntoView {
+    let is_checked = selected_datas.get_untracked().contains(&data_id);
 
-    let toggle_post_selection = move |_ev: Event| {
-        selected_posts.update(|selected| {
-            if selected.contains(&post_id) {
-                selected.remove(&post_id);
+    let toggle_data_selection = move |_ev: Event| {
+        selected_datas.update(|selected| {
+            if selected.contains(&data_id) {
+                selected.remove(&data_id);
             } else {
-                selected.insert(post_id);
+                selected.insert(data_id);
             }
         });
     };
@@ -79,7 +79,7 @@ pub fn PostCheckbox(post_id: u32, selected_posts: RwSignal<HashSet<u32>>) -> imp
         <input
             class="form-check-input"
             type="checkbox"
-            on:change=toggle_post_selection
+            on:change=toggle_data_selection
             prop:checked=is_checked
         />
     }

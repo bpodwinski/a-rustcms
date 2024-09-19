@@ -5,8 +5,8 @@ use leptos::*;
 use crate::{
     components::{
         admin::{
-            header_content_component::HeaderContent, modal_component::*,
-            posts_table::post_list_v2_component::PostListV2,
+            data_table::data_table_component::DataTable, header_content_component::HeaderContent,
+            modal_component::*,
         },
         front::loading_component::LoadingComponent,
     },
@@ -227,7 +227,7 @@ pub fn AdminPostsView() -> impl IntoView {
             {move || {
                 if let Some(Ok(posts_vec)) = posts.get() {
                     set_loaded_posts.set(posts_vec);
-                    view! { <PostListV2 posts=loaded_posts.into() selected_posts=selected_posts/> }
+                    view! { <DataTable data=loaded_posts.into() selected_datas=selected_posts/> }
                 } else {
                     view! { <LoadingComponent/> }
                 }

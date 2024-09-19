@@ -2,10 +2,11 @@ use leptos::*;
 use std::{collections::HashSet, sync::Arc};
 
 use crate::{
-    components::admin::posts_table::{
-        post_list_column_visibility_component::ColumnVisibilityDropdown,
-        post_list_selection_component::*, post_list_sorts_component::*,
-        post_list_table_header_component::PostTableHeader,
+    components::admin::data_table::{
+        data_table_column_visibility_component::ColumnVisibilityDropdown,
+        data_table_header_component::DataTableHeader,
+        data_table_selection_component::{Checkbox, TotalItems},
+        data_table_sorts_component::*,
     },
     models::admin::posts_model::PostStruct,
 };
@@ -19,9 +20,9 @@ pub struct TableColumn<T> {
 }
 
 #[component]
-pub fn PostListV2(
-    posts: Signal<Vec<PostStruct>>,
-    selected_posts: RwSignal<HashSet<u32>>,
+pub fn DataTable(
+    data: Signal<Vec<PostStruct>>,
+    selected_datas: RwSignal<HashSet<u32>>,
 ) -> impl IntoView {
     let sort_column: RwSignal<Option<usize>> = create_rw_signal(None);
     let sort_order = create_rw_signal(SortOrder::Descending);
@@ -123,30 +124,30 @@ pub fn PostListV2(
 
                     <table class="table table-striped">
 
-                        <PostTableHeader
+                        <DataTableHeader
                             sort_column=sort_column
                             sort_order=sort_order
                             columns=columns.into()
-                            posts=posts
-                            selected_posts=selected_posts
+                            data=data
+                            selected_datas=selected_datas
                         />
 
                         <tbody>
                             {move || {
-                                let mut post_list = posts.get();
-                                sort_posts(
-                                    &mut post_list,
+                                let mut data_list = data.get();
+                                sort_datas(
+                                    &mut data_list,
                                     &columns.get(),
                                     sort_column.get(),
                                     sort_order.get(),
                                 );
-                                if !post_list.is_empty() {
+                                if !data_list.is_empty() {
                                     view! {
                                         <>
-                                            {post_list
+                                            {data_list
                                                 .into_iter()
-                                                .map(|post| {
-                                                    let is_checked = selected_posts.get().contains(&post.id);
+                                                .map(|data| {
+                                                    let is_checked = selected_datas.get().contains(&data.id);
                                                     let row_class = if is_checked {
                                                         "table-active"
                                                     } else {
@@ -156,22 +157,19 @@ pub fn PostListV2(
                                                         <tr
                                                             class=row_class
                                                             on:click=move |_| {
-                                                                selected_posts
+                                                                selected_datas
                                                                     .update(|set| {
-                                                                        if set.contains(&post.id) {
-                                                                            set.remove(&post.id);
+                                                                        if set.contains(&data.id) {
+                                                                            set.remove(&data.id);
                                                                         } else {
-                                                                            set.insert(post.id);
+                                                                            set.insert(data.id);
                                                                         }
                                                                     });
                                                             }
                                                         >
 
                                                             <td>
-                                                                <PostCheckbox
-                                                                    post_id=post.id
-                                                                    selected_posts=selected_posts
-                                                                />
+                                                                <Checkbox data_id=data.id selected_datas=selected_datas/>
                                                             </td>
 
                                                             {columns
@@ -179,7 +177,7 @@ pub fn PostListV2(
                                                                 .iter()
                                                                 .filter(|c| c.visible.get())
                                                                 .map(|column| {
-                                                                    view! { <td>{(column.value_fn)(&post)}</td> }
+                                                                    view! { <td>{(column.value_fn)(&data)}</td> }
                                                                 })
                                                                 .collect::<Vec<_>>()}
 
@@ -193,7 +191,7 @@ pub fn PostListV2(
                                     view! {
                                         <>
                                             <tr>
-                                                <td colspan="5">"No posts available"</td>
+                                                <td colspan="5">"No datas available"</td>
                                             </tr>
                                         </>
                                     }
@@ -202,7 +200,7 @@ pub fn PostListV2(
 
                         </tbody>
 
-                        <TotalItems posts=posts selected_posts=selected_posts/>
+                        <TotalItems data=data selected_datas=selected_datas/>
 
                     </table>
 

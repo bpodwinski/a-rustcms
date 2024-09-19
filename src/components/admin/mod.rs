@@ -1,9 +1,9 @@
 pub mod admin_bar_component;
 pub mod admin_menu_component;
 pub mod categories_component;
+pub mod data_table;
 pub mod header_content_component;
 pub mod modal_component;
 pub mod notification_component;
-pub mod posts_table;
 pub mod publish_component;
 pub mod tags_component;

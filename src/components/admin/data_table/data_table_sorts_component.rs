@@ -1,6 +1,6 @@
 use leptos::*;
 
-use super::post_list_v2_component::TableColumn;
+use super::data_table_component::TableColumn;
 
 #[derive(Clone, Copy, PartialEq, Eq)]
 pub enum SortOrder {
@@ -26,8 +26,8 @@ pub fn toggle_sort(
     }
 }
 
-pub fn sort_posts<T>(
-    posts: &mut Vec<T>,
+pub fn sort_datas<T>(
+    datas: &mut Vec<T>,
     columns: &Vec<TableColumn<T>>,
     sort_column: Option<usize>,
     sort_order: SortOrder,
@@ -35,8 +35,8 @@ pub fn sort_posts<T>(
     if let Some(col_index) = sort_column {
         if let Some(sort_fn) = &columns[col_index].sort_fn {
             match sort_order {
-                SortOrder::Ascending => posts.sort_by(|a, b| sort_fn(a, b)),
-                SortOrder::Descending => posts.sort_by(|a, b| sort_fn(b, a)),
+                SortOrder::Ascending => datas.sort_by(|a, b| sort_fn(a, b)),
+                SortOrder::Descending => datas.sort_by(|a, b| sort_fn(b, a)),
             }
         }
     }

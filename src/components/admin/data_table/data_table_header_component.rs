@@ -3,28 +3,28 @@ use std::collections::HashSet;
 use leptos::*;
 
 use crate::{
-    components::admin::posts_table::{
-        post_list_selection_component::SelectAllCheckbox, post_list_sorts_component::*,
+    components::admin::data_table::{
+        data_table_selection_component::SelectAllCheckbox, data_table_sorts_component::toggle_sort,
     },
     models::admin::posts_model::PostStruct,
 };
 
-use super::post_list_v2_component::TableColumn;
+use super::{data_table_component::TableColumn, data_table_sorts_component::SortOrder};
 
 #[component]
-pub fn PostTableHeader<T: 'static + Clone>(
+pub fn DataTableHeader<T: 'static + Clone>(
     sort_column: RwSignal<Option<usize>>,
     sort_order: RwSignal<SortOrder>,
     columns: Signal<Vec<TableColumn<T>>>,
-    posts: Signal<Vec<PostStruct>>,
-    selected_posts: RwSignal<HashSet<u32>>,
+    data: Signal<Vec<PostStruct>>,
+    selected_datas: RwSignal<HashSet<u32>>,
 ) -> impl IntoView {
     view! {
         <thead>
             <tr>
 
                 <th scope="col">
-                    <SelectAllCheckbox posts=posts selected_posts=selected_posts/>
+                    <SelectAllCheckbox data=data selected_datas=selected_datas/>
                 </th>
 
                 {move || {

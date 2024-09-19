@@ -1,6 +1,6 @@
 use leptos::*;
 
-use super::post_list_v2_component::TableColumn;
+use super::data_table_component::TableColumn;
 
 #[component]
 pub fn ColumnVisibilityDropdown<T: 'static + Clone>(
