@@ -1,6 +1,5 @@
-use std::collections::HashSet;
-
 use leptos::*;
+use std::collections::HashSet;
 
 use crate::{
     components::admin::data_table::{

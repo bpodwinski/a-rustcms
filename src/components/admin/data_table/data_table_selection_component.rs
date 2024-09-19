@@ -1,7 +1,6 @@
-use std::collections::HashSet;
-
 use ev::Event;
 use leptos::*;
+use std::collections::HashSet;
 
 #[component]
 pub fn TotalItems<T: 'static + Clone>(
