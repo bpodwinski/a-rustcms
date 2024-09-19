@@ -153,7 +153,19 @@ pub fn PostListV2(
                                                         ""
                                                     };
                                                     view! {
-                                                        <tr class=row_class>
+                                                        <tr
+                                                            class=row_class
+                                                            on:click=move |_| {
+                                                                selected_posts
+                                                                    .update(|set| {
+                                                                        if set.contains(&post.id) {
+                                                                            set.remove(&post.id);
+                                                                        } else {
+                                                                            set.insert(post.id);
+                                                                        }
+                                                                    });
+                                                            }
+                                                        >
 
                                                             <td>
                                                                 <PostCheckbox
