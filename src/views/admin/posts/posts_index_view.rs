@@ -1,11 +1,12 @@
-use std::collections::HashSet;
+use std::{collections::HashSet, sync::Arc};
 
 use leptos::*;
 
 use crate::{
     components::{
         admin::{
-            data_table::data_table_component::DataTable, header_content_component::HeaderContent,
+            data_table::data_table_component::{DataTable, TableColumn},
+            header_content_component::HeaderContent,
             modal_component::*,
         },
         front::loading_component::LoadingComponent,
@@ -227,7 +228,66 @@ pub fn AdminPostsView() -> impl IntoView {
             {move || {
                 if let Some(Ok(posts_vec)) = posts.get() {
                     set_loaded_posts.set(posts_vec);
-                    view! { <DataTable data=loaded_posts.into() selected_datas=selected_posts/> }
+                    let (columns, _) = create_signal(
+                        vec![
+                            TableColumn {
+                                title: "Title",
+                                value_fn: Arc::new(|post: &PostStruct| {
+                                    view! {
+                                        <>
+                                            <a href=format!(
+                                                "/rs-admin/posts/{}/edit",
+                                                post.id,
+                                            )>{&post.title}</a>
+                                            <div class="small break-word">
+                                                {format!("Slug: {}", &post.slug)}
+                                            </div>
+                                        </>
+                                    }
+                                        .into()
+                                }),
+                                sort_fn: Some(Arc::new(|a, b| a.title.cmp(&b.title))),
+                                visible: create_rw_signal(true),
+                            },
+                            TableColumn {
+                                title: "Date Created",
+                                value_fn: Arc::new(|post: &PostStruct| {
+                                    view! {
+                                        <>
+                                            {post.date_created.format("%Y/%m/%d").to_string()} <br/>
+                                            {post.date_created.format("%-I:%M %P").to_string()}
+                                        </>
+                                    }
+                                        .into()
+                                }),
+                                sort_fn: Some(Arc::new(|a, b| a.date_created.cmp(&b.date_created))),
+                                visible: create_rw_signal(true),
+                            },
+                            TableColumn {
+                                title: "Author",
+                                value_fn: Arc::new(|post: &PostStruct| {
+                                    view! { <>{post.author_id}</> }.into()
+                                }),
+                                sort_fn: Some(Arc::new(|a, b| a.author_id.cmp(&b.author_id))),
+                                visible: create_rw_signal(true),
+                            },
+                            TableColumn {
+                                title: "ID",
+                                value_fn: Arc::new(|post: &PostStruct| {
+                                    view! { <>{post.id}</> }.into()
+                                }),
+                                sort_fn: Some(Arc::new(|a, b| a.id.cmp(&b.id))),
+                                visible: create_rw_signal(true),
+                            },
+                        ],
+                    );
+                    view! {
+                        <DataTable
+                            data=loaded_posts.into()
+                            columns=columns.into()
+                            selected_datas=selected_posts
+                        />
+                    }
                 } else {
                     view! { <LoadingComponent/> }
                 }

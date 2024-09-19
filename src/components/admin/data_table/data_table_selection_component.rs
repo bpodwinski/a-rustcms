@@ -3,11 +3,9 @@ use std::collections::HashSet;
 use ev::Event;
 use leptos::*;
 
-use crate::models::admin::posts_model::PostStruct;
-
 #[component]
-pub fn TotalItems(
-    data: Signal<Vec<PostStruct>>,
+pub fn TotalItems<T: 'static + Clone>(
+    data: Signal<Vec<T>>,
     selected_datas: RwSignal<HashSet<u32>>,
 ) -> impl IntoView {
     view! {
@@ -24,14 +22,14 @@ pub fn TotalItems(
 
 #[component]
 pub fn SelectAllCheckbox(
-    data: Signal<Vec<PostStruct>>,
+    data_ids: Signal<Vec<u32>>,
     selected_datas: RwSignal<HashSet<u32>>,
 ) -> impl IntoView {
     let is_all_selected = move || {
-        let all_ids = data
+        let all_ids = data_ids
             .get_untracked()
             .iter()
-            .map(|data| data.id)
+            .cloned()
             .collect::<HashSet<_>>();
         !all_ids.is_empty() && selected_datas.get_untracked().len() == all_ids.len()
     };
@@ -39,10 +37,10 @@ pub fn SelectAllCheckbox(
     let toggle_select_all = move |ev: Event| {
         let checked = event_target_checked(&ev);
         if checked {
-            let all_ids = data
+            let all_ids = data_ids
                 .get_untracked()
                 .iter()
-                .map(|data| data.id)
+                .cloned()
                 .collect::<HashSet<_>>();
             selected_datas.set(all_ids);
         } else {

@@ -4,15 +4,23 @@ use chrono::NaiveDateTime;
 use serde::{Deserialize, Serialize};
 use strum_macros::{Display, EnumIter};
 
-#[derive(
-    Serialize, Deserialize, Clone, Debug, EnumIter, Display, PartialEq, Eq, Hash,
-)]
+#[derive(Serialize, Deserialize, Clone, Debug, EnumIter, Display, PartialEq, Eq, Hash)]
 pub enum PostStatusEnum {
     Draft,
     Pending,
     Private,
     Scheduled,
     Published,
+}
+
+pub trait Id {
+    fn id(&self) -> u32;
+}
+
+impl Id for PostStruct {
+    fn id(&self) -> u32 {
+        self.id
+    }
 }
 
 #[derive(Serialize, Deserialize, Clone, PartialEq, Eq, Hash, Debug)]

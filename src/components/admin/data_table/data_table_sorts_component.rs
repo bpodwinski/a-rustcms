@@ -26,7 +26,7 @@ pub fn toggle_sort(
     }
 }
 
-pub fn sort_datas<T>(
+pub fn sort_datas<T: 'static + Clone>(
     datas: &mut Vec<T>,
     columns: &Vec<TableColumn<T>>,
     sort_column: Option<usize>,

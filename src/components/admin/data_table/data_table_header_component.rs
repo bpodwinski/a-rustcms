@@ -6,17 +6,17 @@ use crate::{
     components::admin::data_table::{
         data_table_selection_component::SelectAllCheckbox, data_table_sorts_component::toggle_sort,
     },
-    models::admin::posts_model::PostStruct,
+    models::admin::posts_model::Id,
 };
 
 use super::{data_table_component::TableColumn, data_table_sorts_component::SortOrder};
 
 #[component]
-pub fn DataTableHeader<T: 'static + Clone>(
+pub fn DataTableHeader<T: Id + 'static + Clone>(
     sort_column: RwSignal<Option<usize>>,
     sort_order: RwSignal<SortOrder>,
     columns: Signal<Vec<TableColumn<T>>>,
-    data: Signal<Vec<PostStruct>>,
+    data: Signal<Vec<T>>,
     selected_datas: RwSignal<HashSet<u32>>,
 ) -> impl IntoView {
     view! {
@@ -24,7 +24,13 @@ pub fn DataTableHeader<T: 'static + Clone>(
             <tr>
 
                 <th scope="col">
-                    <SelectAllCheckbox data=data selected_datas=selected_datas/>
+                    <SelectAllCheckbox
+                        data_ids=Signal::derive(move || {
+                            data.get().iter().map(|item| item.id()).collect::<Vec<u32>>()
+                        })
+
+                        selected_datas=selected_datas
+                    />
                 </th>
 
                 {move || {
