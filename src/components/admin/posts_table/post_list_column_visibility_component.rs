@@ -25,7 +25,7 @@ pub fn ColumnVisibilityDropdown<T: 'static + Clone>(
                     current_columns
                         .into_iter()
                         .map(|column| {
-                            let column_clone = column.clone();
+                            let visible_signal = column.visible.clone();
                             view! {
                                 <li>
                                     <div class="dropdown-item">
@@ -33,14 +33,14 @@ pub fn ColumnVisibilityDropdown<T: 'static + Clone>(
                                             <input
                                                 class="form-check-input"
                                                 type="checkbox"
-                                                checked=move || column_clone.visible.get()
+                                                checked=move || visible_signal.get()
                                                 on:change=move |_| {
-                                                    column_clone.visible.update(|v| *v = !*v);
+                                                    visible_signal.update(|v| *v = !*v);
                                                 }
                                             />
 
                                             <label class="form-check-label" style="width: 100%;">
-                                                {column_clone.title}
+                                                {column.title}
                                             </label>
                                         </div>
                                     </div>

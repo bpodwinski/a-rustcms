@@ -13,7 +13,7 @@ use super::post_list_v2_component::TableColumn;
 
 #[component]
 pub fn PostTableHeader<T: 'static + Clone>(
-    sort_column: RwSignal<SortColumn>,
+    sort_column: RwSignal<Option<usize>>,
     sort_order: RwSignal<SortOrder>,
     columns: Signal<Vec<TableColumn<T>>>,
     posts: Signal<Vec<PostStruct>>,
@@ -30,47 +30,48 @@ pub fn PostTableHeader<T: 'static + Clone>(
                 {move || {
                     columns
                         .get()
-                        .into_iter()
-                        .map(|column| {
+                        .iter()
+                        .enumerate()
+                        .map(|(index, column)| {
                             if column.visible.get() {
-                                view! {
-                                    <th scope="col">
-                                        {if let Some(sort_col) = column.sort_column {
-                                            view! {
-                                                <button
-                                                    class="btn btn-dark"
-                                                    on:click=move |_| toggle_sort(
-                                                        sort_column,
-                                                        sort_order,
-                                                        sort_col,
-                                                    )
-                                                >
+                                Some(
+                                    view! {
+                                        <th scope="col">
+                                            {if column.sort_fn.is_some() {
+                                                view! {
+                                                    <button
+                                                        class="btn btn-dark"
+                                                        on:click=move |_| toggle_sort(
+                                                            sort_column,
+                                                            sort_order,
+                                                            index,
+                                                        )
+                                                    >
 
-                                                    {column.title}
-                                                    {move || {
-                                                        if sort_column.get() == sort_col {
-                                                            if sort_order.get() == SortOrder::Ascending {
-                                                                view! { <i class="bi bi-sort-down-alt ms-1"></i> }
+                                                        {column.title}
+                                                        {move || {
+                                                            if sort_column.get() == Some(index) {
+                                                                if sort_order.get() == SortOrder::Ascending {
+                                                                    view! { <i class="bi bi-sort-down-alt ms-1"></i> }
+                                                                } else {
+                                                                    view! { <i class="bi bi-sort-up ms-1"></i> }
+                                                                }
                                                             } else {
-                                                                view! { <i class="bi bi-sort-up ms-1"></i> }
+                                                                view! { <i class="bi bi-sort-up text-secondary ms-1"></i> }
                                                             }
-                                                        } else {
-                                                            view! { <i class="bi bi-sort-up ms-1"></i> }
-                                                        }
-                                                    }}
+                                                        }}
 
-                                                </button>
-                                            }
-                                        } else {
-                                            view! {
-                                                <button class="btn btn-dark">{column.title}</button>
-                                            }
-                                        }}
+                                                    </button>
+                                                }
+                                            } else {
+                                                view! { <button>{column.title}</button> }
+                                            }}
 
-                                    </th>
-                                }
+                                        </th>
+                                    },
+                                )
                             } else {
-                                view! { <th></th> }
+                                None
                             }
                         })
                         .collect::<Vec<_>>()

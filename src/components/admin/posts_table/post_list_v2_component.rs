@@ -13,9 +13,9 @@ use crate::{
 #[derive(Clone)]
 pub struct TableColumn<T> {
     pub title: &'static str,
-    pub value_fn: Arc<dyn Fn(&T) -> String + Send + Sync>,
+    pub value_fn: Arc<dyn Fn(&T) -> View + Send + Sync>,
+    pub sort_fn: Option<Arc<dyn Fn(&T, &T) -> std::cmp::Ordering + Send + Sync>>,
     pub visible: RwSignal<bool>,
-    pub sort_column: Option<SortColumn>,
 }
 
 #[component]
@@ -23,35 +23,54 @@ pub fn PostListV2(
     posts: Signal<Vec<PostStruct>>,
     selected_posts: RwSignal<HashSet<u32>>,
 ) -> impl IntoView {
-    let sort_column: RwSignal<SortColumn> = create_rw_signal(SortColumn::ID);
+    let sort_column: RwSignal<Option<usize>> = create_rw_signal(None);
     let sort_order = create_rw_signal(SortOrder::Descending);
 
     let (columns, _) = create_signal(vec![
         TableColumn {
             title: "Title",
-            value_fn: Arc::new(|post: &PostStruct| post.title.clone()),
+            value_fn: Arc::new(|post: &PostStruct| {
+                view! {
+                    <>
+                        <a href=format!("/rs-admin/posts/{}/edit", post.id)>
+                            {&post.title}
+                        </a>
+                        <div class="small break-word">
+                            {format!("Slug: {}", &post.slug)}
+                        </div>
+                    </>
+                }
+                .into()
+            }),
+            sort_fn: Some(Arc::new(|a, b| a.title.cmp(&b.title))),
             visible: create_rw_signal(true),
-            sort_column: Some(SortColumn::Title),
         },
         TableColumn {
             title: "Date Created",
             value_fn: Arc::new(|post: &PostStruct| {
-                post.date_created.format("%Y/%m/%d").to_string()
+                view! {
+                    <>
+                        {post.date_created.format("%Y/%m/%d").to_string()}<br/>
+                        {post.date_created.format("%-I:%M %P").to_string()}
+                    </>
+                }
+                .into()
             }),
+
+            sort_fn: Some(Arc::new(|a, b| a.date_created.cmp(&b.date_created))),
             visible: create_rw_signal(true),
-            sort_column: Some(SortColumn::DateCreated),
         },
         TableColumn {
             title: "Author",
-            value_fn: Arc::new(|post: &PostStruct| post.author_id.to_string()),
+            value_fn: Arc::new(|post: &PostStruct| view! { <> {post.author_id} </> }.into()),
+            sort_fn: Some(Arc::new(|a, b| a.author_id.cmp(&b.author_id))),
             visible: create_rw_signal(true),
-            sort_column: Some(SortColumn::Author),
         },
         TableColumn {
             title: "ID",
-            value_fn: Arc::new(|post: &PostStruct| post.id.to_string()),
+            value_fn: Arc::new(|post: &PostStruct| view! { <> {post.id} </> }.into()),
+            sort_fn: Some(Arc::new(|a, b| a.id.cmp(&b.id))),
             visible: create_rw_signal(true),
-            sort_column: Some(SortColumn::ID),
         },
     ]);
 
@@ -62,7 +81,11 @@ pub fn PostListV2(
 
                     <div class="d-flex justify-content-end align-items-center w-100 my-2">
 
-                        <SortSelect sort_column=sort_column sort_order=sort_order/>
+                        <SortSelect
+                            columns=columns.into()
+                            sort_column=sort_column
+                            sort_order=sort_order
+                        />
 
                         <ColumnVisibilityDropdown columns=columns.into()/>
 
@@ -111,7 +134,12 @@ pub fn PostListV2(
                         <tbody>
                             {move || {
                                 let mut post_list = posts.get();
-                                sort_posts(&mut post_list, sort_column.get(), sort_order.get());
+                                sort_posts(
+                                    &mut post_list,
+                                    &columns.get(),
+                                    sort_column.get(),
+                                    sort_order.get(),
+                                );
                                 if !post_list.is_empty() {
                                     view! {
                                         <>
