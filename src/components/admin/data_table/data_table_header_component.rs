@@ -41,7 +41,20 @@ pub fn DataTableHeader<T: Id + 'static + Clone>(
                             if column.visible.get() {
                                 Some(
                                     view! {
-                                        <th scope="col">
+                                        <th
+                                            scope="col"
+                                            aria-sort=move || {
+                                                if sort_column.get() == Some(index) {
+                                                    match sort_order.get() {
+                                                        SortOrder::Ascending => "ascending",
+                                                        SortOrder::Descending => "descending",
+                                                    }
+                                                } else {
+                                                    "none"
+                                                }
+                                            }
+                                        >
+
                                             {if column.sort_fn.is_some() {
                                                 view! {
                                                     <button
@@ -51,6 +64,8 @@ pub fn DataTableHeader<T: Id + 'static + Clone>(
                                                             sort_order,
                                                             index,
                                                         )
+
+                                                        aria-label=format!("Sort by {}", column.title)
                                                     >
 
                                                         {column.title}
@@ -69,7 +84,9 @@ pub fn DataTableHeader<T: Id + 'static + Clone>(
                                                     </button>
                                                 }
                                             } else {
-                                                view! { <button>{column.title}</button> }
+                                                view! {
+                                                    <button class="btn btn-dark">{column.title}</button>
+                                                }
                                             }}
 
                                         </th>

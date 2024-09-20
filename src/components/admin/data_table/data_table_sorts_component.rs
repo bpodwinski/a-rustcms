@@ -51,8 +51,8 @@ pub fn SortSelect<T: 'static + Clone>(
     view! {
         <select
             class="form-select me-2"
-            aria-label="Sort Table By"
-            style="width: fit-content;"
+            aria-label="Sort options"
+            style="width: fit-content"
             on:change=move |ev| {
                 if let Ok(selected_index) = event_target_value(&ev).parse::<usize>() {
                     toggle_sort(sort_column, sort_order, selected_index);

@@ -22,8 +22,8 @@ pub fn AdminPostsView() -> impl IntoView {
 
     // Pagination
     let current_page = create_rw_signal(1);
-    let items_per_page = create_rw_signal(10);
-    let (total_items_signal, set_total_items_signal) = create_signal(0usize);
+    let items_per_page = create_rw_signal(100u32);
+    let (total_items_signal, set_total_items_signal) = create_signal(0u32);
 
     // Resource pour les posts paginés
     let posts = create_resource(
@@ -298,13 +298,13 @@ pub fn AdminPostsView() -> impl IntoView {
                             columns=columns.into()
                             selected_datas=selected_posts
                             total_items=total_items_signal.into()
+                            current_page=current_page
+                            items_per_page=items_per_page
                             on_page_change=Arc::new(move |new_page| {
-                                log::info!("Page changed to: {}", new_page);
                                 current_page.set(new_page);
                             })
 
                             on_items_per_page_change=Arc::new(move |new_items_per_page| {
-                                log::info!("Items per page changed to: {}", new_items_per_page);
                                 items_per_page.set(new_items_per_page.try_into().unwrap());
                             })
                         />
