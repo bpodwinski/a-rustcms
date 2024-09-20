@@ -1,4 +1,5 @@
 use leptos::*;
+use leptos_router::{use_navigate, NavigateOptions};
 use std::sync::Arc;
 
 #[component]
@@ -9,15 +10,21 @@ pub fn Pagination(
     on_page_change: Arc<dyn Fn(u32)>,
     on_items_per_page_change: Arc<dyn Fn(u32)>,
 ) -> impl IntoView {
+    let navigate = use_navigate();
+
     fn go_to_page(
         page: u32,
         current_page: &RwSignal<u32>,
         total_pages: u32,
         on_page_change: Arc<dyn Fn(u32)>,
+        navigate: impl Fn(&str, NavigateOptions) + Clone,
     ) {
         if page > 0 && page <= total_pages {
             current_page.set(page);
             on_page_change(page);
+            let url = format!("rs-admin/posts/page/{}", page);
+            let options = NavigateOptions::default();
+            navigate(&url, options);
         }
     }
 
@@ -30,6 +37,7 @@ pub fn Pagination(
 
                     {
                         let on_page_change_clone = on_page_change.clone();
+                        let navigate_clone = navigate.clone();
                         view! {
                             <a
                                 class="page-link"
@@ -39,6 +47,7 @@ pub fn Pagination(
                                     &current_page,
                                     total_pages.get(),
                                     on_page_change_clone.clone(),
+                                    navigate_clone.clone(),
                                 )
                             >
 
@@ -60,6 +69,7 @@ pub fn Pagination(
                                 "page-item"
                             };
                             let on_page_change_clone = on_page_change.clone();
+                            let navigate_clone = navigate.clone();
                             view! {
                                 <li class=page_class>
                                     <a
@@ -70,6 +80,7 @@ pub fn Pagination(
                                             &current_page,
                                             total_pages_val,
                                             on_page_change_clone.clone(),
+                                            navigate_clone.clone(),
                                         )
                                     >
 
@@ -92,6 +103,7 @@ pub fn Pagination(
 
                     {
                         let on_page_change_clone = on_page_change.clone();
+                        let navigate_clone = navigate.clone();
                         view! {
                             <a
                                 class="page-link"
@@ -101,6 +113,7 @@ pub fn Pagination(
                                     &current_page,
                                     total_pages.get(),
                                     on_page_change_clone.clone(),
+                                    navigate_clone.clone(),
                                 )
                             >
 

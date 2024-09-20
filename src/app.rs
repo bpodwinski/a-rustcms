@@ -46,6 +46,7 @@ pub fn App() -> impl IntoView {
 
                         // Posts routes
                         <Route path="posts" view=AdminPostsView/>
+                        <Route path="posts/page/:page" view=AdminPostsView/>
                         <Route path="posts/new" view=AdminPostNewView/>
 
                         // Tags routes

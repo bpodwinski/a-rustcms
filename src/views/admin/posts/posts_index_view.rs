@@ -1,6 +1,7 @@
 use std::{collections::HashSet, sync::Arc};
 
 use leptos::*;
+use leptos_router::use_params_map;
 
 use crate::{
     components::{
@@ -21,7 +22,14 @@ pub fn AdminPostsView() -> impl IntoView {
     add_class("body", "posts");
 
     // Pagination
-    let current_page = create_rw_signal(1);
+    let params = use_params_map();
+    let page = params.with(|params| {
+        params
+            .get("page")
+            .and_then(|p| p.parse::<u32>().ok())
+            .unwrap_or(1)
+    });
+    let current_page = create_rw_signal(page);
     let items_per_page = create_rw_signal(50);
     let (total_items_signal, set_total_items_signal) = create_signal(0);
 
