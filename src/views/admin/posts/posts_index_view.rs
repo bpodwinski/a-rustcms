@@ -22,8 +22,8 @@ pub fn AdminPostsView() -> impl IntoView {
 
     // Pagination
     let current_page = create_rw_signal(1);
-    let items_per_page = create_rw_signal(100u32);
-    let (total_items_signal, set_total_items_signal) = create_signal(0u32);
+    let items_per_page = create_rw_signal(50);
+    let (total_items_signal, set_total_items_signal) = create_signal(0);
 
     // Resource pour les posts paginés
     let posts = create_resource(
