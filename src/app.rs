@@ -9,7 +9,6 @@ use crate::views::admin::login::login_view::AdminLoginView;
 use crate::views::admin::posts::post_new_view::AdminPostNewView;
 use crate::views::admin::posts::posts_index_view::AdminPostsView;
 use crate::views::admin::tags::tags_index_view::AdminTagsView;
-use crate::views::front::home_view::FrontHomeView;
 
 #[component]
 pub fn App() -> impl IntoView {
@@ -55,8 +54,8 @@ pub fn App() -> impl IntoView {
 
                     <Route path="/rs-admin/login" view=AdminLoginView/>
 
-                    // Front routes
-                    <Route path="/" view=FrontHomeView/>
+                // Front routes
+                // <Route path="/" view=FrontHomeView/>
 
                 </Routes>
             </main>

@@ -20,7 +20,17 @@ use crate::{
 pub fn AdminPostsView() -> impl IntoView {
     add_class("body", "posts");
 
-    let posts = create_resource(|| (), move |_| async { get_posts().await });
+    // Pagination
+    let current_page = create_rw_signal(1);
+    let items_per_page = create_rw_signal(10);
+    let (total_items_signal, set_total_items_signal) = create_signal(0usize);
+
+    // Resource pour les posts paginés
+    let posts = create_resource(
+        move || (current_page.get(), items_per_page.get()),
+        move |(page, limit)| async move { get_posts(page, limit.try_into().unwrap()).await },
+    );
+
     let (loaded_posts, set_loaded_posts) = create_signal(Vec::<PostStruct>::new());
     let selected_posts = create_rw_signal(HashSet::<u32>::new());
     let is_modal_open = create_rw_signal(false);
@@ -226,8 +236,9 @@ pub fn AdminPostsView() -> impl IntoView {
             view! { <LoadingComponent/> }
         }>
             {move || {
-                if let Some(Ok(posts_vec)) = posts.get() {
-                    set_loaded_posts.set(posts_vec);
+                if let Some(Ok(paginated_posts)) = posts.get() {
+                    set_loaded_posts.set(paginated_posts.data.clone());
+                    set_total_items_signal.set(paginated_posts.total_items.try_into().unwrap());
                     let (columns, _) = create_signal(
                         vec![
                             TableColumn {
@@ -286,6 +297,16 @@ pub fn AdminPostsView() -> impl IntoView {
                             data=loaded_posts.into()
                             columns=columns.into()
                             selected_datas=selected_posts
+                            total_items=total_items_signal.into()
+                            on_page_change=Arc::new(move |new_page| {
+                                log::info!("Page changed to: {}", new_page);
+                                current_page.set(new_page);
+                            })
+
+                            on_items_per_page_change=Arc::new(move |new_items_per_page| {
+                                log::info!("Items per page changed to: {}", new_items_per_page);
+                                items_per_page.set(new_items_per_page.try_into().unwrap());
+                            })
                         />
                     }
                 } else {

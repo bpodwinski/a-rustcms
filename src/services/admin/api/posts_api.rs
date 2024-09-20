@@ -1,7 +1,7 @@
 use reqwest::{Client, Response};
 
 use crate::models::admin::posts_model::{
-    PostNewStruct, PostRequest, PostStruct, PostsIds,
+    PaginatedPosts, PostNewStruct, PostRequest, PostStruct, PostsIds,
 };
 
 const BASE_URL: &str = "http://127.0.0.1:6988/api/v1/posts";
@@ -13,18 +13,25 @@ where
     response.json::<T>().await.map_err(|e| e.to_string())
 }
 
-pub async fn get_posts() -> Result<Vec<PostStruct>, String> {
+pub async fn get_posts(page: u32, limit: u32) -> Result<PaginatedPosts, String> {
     let client = Client::new();
 
+    let url = format!("{BASE_URL}?page={}&limit={}", page, limit);
+
     let response = client
-        .get(BASE_URL)
+        .get(&url)
         .send()
         .await
         .map_err(|e| e.to_string())?
         .error_for_status()
         .map_err(|e| e.to_string())?;
 
-    handle_response(response).await
+    let paginated_posts = response
+        .json::<PaginatedPosts>()
+        .await
+        .map_err(|e| e.to_string())?;
+
+    Ok(paginated_posts)
 }
 
 pub async fn get_post_by_id(post_id: u32) -> Result<PostStruct, String> {
@@ -73,10 +80,7 @@ pub async fn add_post(post: PostRequest) -> Result<PostStruct, String> {
     }
 }
 
-pub async fn update_post(
-    post_id: u32,
-    post: PostNewStruct,
-) -> Result<PostNewStruct, String> {
+pub async fn update_post(post_id: u32, post: PostNewStruct) -> Result<PostNewStruct, String> {
     let client = Client::new();
     let url = format!("{}/{}", BASE_URL, post_id);
 

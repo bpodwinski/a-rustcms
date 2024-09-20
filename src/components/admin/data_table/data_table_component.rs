@@ -24,9 +24,23 @@ pub fn DataTable<T: Id + 'static + Clone>(
     data: Signal<Vec<T>>,
     columns: Signal<Vec<TableColumn<T>>>,
     selected_datas: RwSignal<HashSet<u32>>,
+    total_items: Signal<usize>,
+    on_page_change: Arc<dyn Fn(u32)>,
+    on_items_per_page_change: Arc<dyn Fn(u32)>,
 ) -> impl IntoView {
     let sort_column: RwSignal<Option<usize>> = create_rw_signal(None);
     let sort_order = create_rw_signal(SortOrder::Descending);
+    let current_page = create_rw_signal(1);
+    let items_per_page = create_rw_signal(10);
+    let total_pages = create_memo(move |_| {
+        let total_items = total_items.get();
+        let per_page = items_per_page.get();
+        if per_page > 0 {
+            (total_items + per_page - 1) / per_page
+        } else {
+            1
+        }
+    });
 
     view! {
         <div class="card mb-3">
@@ -43,36 +57,6 @@ pub fn DataTable<T: Id + 'static + Clone>(
 
                         <ColumnVisibilityDropdown columns=columns.into()/>
 
-                        <nav aria-label="Page navigation example">
-                            <ul
-                                class="pagination justify-content-end"
-                                style="margin-bottom: 0px !important"
-                            >
-                                <li class="page-item disabled">
-                                    <a class="page-link">Previous</a>
-                                </li>
-                                <li class="page-item">
-                                    <a class="page-link" href="#">
-                                        1
-                                    </a>
-                                </li>
-                                <li class="page-item">
-                                    <a class="page-link" href="#">
-                                        2
-                                    </a>
-                                </li>
-                                <li class="page-item">
-                                    <a class="page-link" href="#">
-                                        3
-                                    </a>
-                                </li>
-                                <li class="page-item">
-                                    <a class="page-link" href="#">
-                                        Next
-                                    </a>
-                                </li>
-                            </ul>
-                        </nav>
                     </div>
 
                     <table class="table table-striped">
@@ -86,6 +70,7 @@ pub fn DataTable<T: Id + 'static + Clone>(
                         />
 
                         <tbody>
+
                             {move || {
                                 let mut data_list = data.get();
                                 sort_datas(
@@ -97,71 +82,47 @@ pub fn DataTable<T: Id + 'static + Clone>(
                                 if !data_list.is_empty() {
                                     view! {
                                         <>
-                                            {move || {
-                                                let mut data_list = data.get();
-                                                sort_datas(
-                                                    &mut data_list,
-                                                    &columns.get(),
-                                                    sort_column.get(),
-                                                    sort_order.get(),
-                                                );
-                                                if !data_list.is_empty() {
+                                            {data_list
+                                                .iter()
+                                                .map(|data| {
+                                                    let data_id = data.id();
+                                                    let is_checked = selected_datas.get().contains(&data_id);
+                                                    let row_class = if is_checked {
+                                                        "table-active"
+                                                    } else {
+                                                        ""
+                                                    };
                                                     view! {
-                                                        <>
-                                                            {data_list
+                                                        <tr
+                                                            class=row_class
+                                                            on:click=move |_| {
+                                                                selected_datas
+                                                                    .update(|set| {
+                                                                        if set.contains(&data_id) {
+                                                                            set.remove(&data_id);
+                                                                        } else {
+                                                                            set.insert(data_id);
+                                                                        }
+                                                                    });
+                                                            }
+                                                        >
+
+                                                            <td>
+                                                                <Checkbox data_id=data_id selected_datas=selected_datas/>
+                                                            </td>
+
+                                                            {columns
+                                                                .get()
                                                                 .iter()
-                                                                .map(|data| {
-                                                                    let data_id = data.id();
-                                                                    let is_checked = selected_datas.get().contains(&data_id);
-                                                                    let row_class = if is_checked {
-                                                                        "table-active"
-                                                                    } else {
-                                                                        ""
-                                                                    };
-                                                                    view! {
-                                                                        <tr
-                                                                            class=row_class
-                                                                            on:click=move |_| {
-                                                                                selected_datas
-                                                                                    .update(|set| {
-                                                                                        if set.contains(&data_id) {
-                                                                                            set.remove(&data_id);
-                                                                                        } else {
-                                                                                            set.insert(data_id);
-                                                                                        }
-                                                                                    });
-                                                                            }
-                                                                        >
-
-                                                                            <td>
-                                                                                <Checkbox data_id=data_id selected_datas=selected_datas/>
-                                                                            </td>
-
-                                                                            {columns
-                                                                                .get()
-                                                                                .iter()
-                                                                                .filter(|c| c.visible.get())
-                                                                                .map(|column| {
-                                                                                    view! { <td>{(column.value_fn)(&data)}</td> }
-                                                                                })
-                                                                                .collect::<Vec<_>>()}
-
-                                                                        </tr>
-                                                                    }
+                                                                .filter(|c| c.visible.get())
+                                                                .map(|column| {
+                                                                    view! { <td>{(column.value_fn)(&data)}</td> }
                                                                 })
                                                                 .collect::<Vec<_>>()}
-                                                        </>
+                                                        </tr>
                                                     }
-                                                } else {
-                                                    view! {
-                                                        <>
-                                                            <tr>
-                                                                <td colspan="5">"No datas available"</td>
-                                                            </tr>
-                                                        </>
-                                                    }
-                                                }
-                                            }}
+                                                })
+                                                .collect::<Vec<_>>()}
                                         </>
                                     }
                                 } else {
@@ -180,34 +141,6 @@ pub fn DataTable<T: Id + 'static + Clone>(
                         <TotalItems data=data selected_datas=selected_datas/>
 
                     </table>
-
-                    <nav aria-label="Page navigation example">
-                        <ul class="pagination justify-content-end">
-                            <li class="page-item disabled">
-                                <a class="page-link">Previous</a>
-                            </li>
-                            <li class="page-item">
-                                <a class="page-link" href="#">
-                                    1
-                                </a>
-                            </li>
-                            <li class="page-item">
-                                <a class="page-link" href="#">
-                                    2
-                                </a>
-                            </li>
-                            <li class="page-item">
-                                <a class="page-link" href="#">
-                                    3
-                                </a>
-                            </li>
-                            <li class="page-item">
-                                <a class="page-link" href="#">
-                                    Next
-                                </a>
-                            </li>
-                        </ul>
-                    </nav>
                 </div>
             </div>
         </div>

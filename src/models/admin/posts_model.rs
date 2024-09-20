@@ -64,3 +64,18 @@ pub struct Category {
 pub struct PostsIds {
     pub ids: HashSet<u32>,
 }
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct PaginationMetadata {
+    pub current_page: u32,
+    pub total_pages: u32,
+    pub total_items: u32,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct PaginatedPosts {
+    pub data: Vec<PostStruct>,
+    pub current_page: u32,
+    pub total_pages: u32,
+    pub total_items: u32,
+}
