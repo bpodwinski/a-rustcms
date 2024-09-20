@@ -2,13 +2,11 @@ use leptos::*;
 use std::collections::HashSet;
 
 use crate::{
-    components::admin::data_table::{
-        data_table_selection_component::SelectAllCheckbox, data_table_sorts_component::toggle_sort,
-    },
+    components::admin::data_table::{selection::DataTableSelectAllCheckbox, sort::toggle_sort},
     models::admin::posts_model::Id,
 };
 
-use super::{data_table_component::TableColumn, data_table_sorts_component::SortOrder};
+use super::{data_table_component::TableColumn, sort::SortOrder};
 
 #[component]
 pub fn DataTableHeader<T: Id + 'static + Clone>(
@@ -23,7 +21,7 @@ pub fn DataTableHeader<T: Id + 'static + Clone>(
             <tr>
 
                 <th scope="col">
-                    <SelectAllCheckbox
+                    <DataTableSelectAllCheckbox
                         data_ids=Signal::derive(move || {
                             data.get().iter().map(|item| item.id()).collect::<Vec<u32>>()
                         })

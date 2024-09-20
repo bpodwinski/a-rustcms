@@ -3,11 +3,11 @@ use std::{collections::HashSet, sync::Arc};
 
 use crate::{
     components::admin::data_table::{
-        data_table_column_visibility_component::ColumnVisibilityDropdown,
-        data_table_header_component::DataTableHeader,
-        data_table_pagination_component::Pagination,
-        data_table_selection_component::{Checkbox, TotalItems},
-        data_table_sorts_component::*,
+        column_visibility::DataTableVisibilityDropdown,
+        header::DataTableHeader,
+        pagination::DataTablePagination,
+        selection::{DataTableCheckbox, TotalItems},
+        sort::{sort_datas, DataTableSortSelect, SortOrder},
     },
     models::admin::posts_model::Id,
 };
@@ -69,7 +69,7 @@ pub fn DataTable<T: Id + 'static + Clone>(
                             Filters
                         </a>
 
-                        <SortSelect
+                        <DataTableSortSelect
                             columns=columns.into()
                             sort_column=sort_column
                             sort_order=sort_order
@@ -104,7 +104,7 @@ pub fn DataTable<T: Id + 'static + Clone>(
                             </option>
                         </select>
 
-                        <ColumnVisibilityDropdown columns=columns.into()/>
+                        <DataTableVisibilityDropdown columns=columns.into()/>
 
                     </div>
 
@@ -160,7 +160,10 @@ pub fn DataTable<T: Id + 'static + Clone>(
                                                         >
 
                                                             <td>
-                                                                <Checkbox data_id=data_id selected_datas=selected_datas/>
+                                                                <DataTableCheckbox
+                                                                    data_id=data_id
+                                                                    selected_datas=selected_datas
+                                                                />
                                                             </td>
 
                                                             {columns
@@ -194,7 +197,7 @@ pub fn DataTable<T: Id + 'static + Clone>(
 
                     </table>
 
-                    <Pagination
+                    <DataTablePagination
                         current_page=current_page
                         total_pages=total_pages.into()
                         on_page_change=on_page_change.clone()

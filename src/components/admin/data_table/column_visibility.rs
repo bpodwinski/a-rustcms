@@ -3,7 +3,7 @@ use leptos::*;
 use super::data_table_component::TableColumn;
 
 #[component]
-pub fn ColumnVisibilityDropdown<T: 'static + Clone>(
+pub fn DataTableVisibilityDropdown<T: 'static + Clone>(
     columns: Signal<Vec<TableColumn<T>>>,
 ) -> impl IntoView {
     let total_columns = move || columns.get().len();

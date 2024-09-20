@@ -43,7 +43,7 @@ pub fn sort_datas<T: 'static + Clone>(
 }
 
 #[component]
-pub fn SortSelect<T: 'static + Clone>(
+pub fn DataTableSortSelect<T: 'static + Clone>(
     columns: Signal<Vec<TableColumn<T>>>,
     sort_column: RwSignal<Option<usize>>,
     sort_order: RwSignal<SortOrder>,

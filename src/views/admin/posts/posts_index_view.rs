@@ -23,7 +23,7 @@ pub fn AdminPostsView() -> impl IntoView {
 
     // Pagination
     let params = use_params_map();
-    let page = params.with(|params| {
+    let page = params.with_untracked(|params| {
         params
             .get("page")
             .and_then(|p| p.parse::<u32>().ok())

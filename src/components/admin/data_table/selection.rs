@@ -20,7 +20,7 @@ pub fn TotalItems<T: 'static + Clone>(
 }
 
 #[component]
-pub fn SelectAllCheckbox(
+pub fn DataTableSelectAllCheckbox(
     data_ids: Signal<Vec<u32>>,
     selected_datas: RwSignal<HashSet<u32>>,
 ) -> impl IntoView {
@@ -60,7 +60,7 @@ pub fn SelectAllCheckbox(
 }
 
 #[component]
-pub fn Checkbox(data_id: u32, selected_datas: RwSignal<HashSet<u32>>) -> impl IntoView {
+pub fn DataTableCheckbox(data_id: u32, selected_datas: RwSignal<HashSet<u32>>) -> impl IntoView {
     let is_checked = move || selected_datas.get_untracked().contains(&data_id);
 
     let toggle_data_selection = move |_ev: Event| {

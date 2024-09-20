@@ -1,7 +1,7 @@
 pub mod data_table_component;
-mod data_table_header_component;
 
-mod data_table_column_visibility_component;
-pub mod data_table_pagination_component;
-mod data_table_selection_component;
-mod data_table_sorts_component;
+mod column_visibility;
+mod header;
+mod pagination;
+mod selection;
+mod sort;

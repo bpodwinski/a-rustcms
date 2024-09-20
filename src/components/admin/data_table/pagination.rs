@@ -3,7 +3,7 @@ use leptos_router::{use_navigate, NavigateOptions};
 use std::sync::Arc;
 
 #[component]
-pub fn Pagination(
+pub fn DataTablePagination(
     current_page: RwSignal<u32>,
     total_pages: Signal<u32>,
     on_page_change: Arc<dyn Fn(u32)>,
