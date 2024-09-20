@@ -1,7 +1,7 @@
 use std::{collections::HashSet, sync::Arc};
 
 use leptos::*;
-use leptos_router::use_params_map;
+use leptos_router::{use_params_map, A};
 
 use crate::{
     components::{
@@ -73,10 +73,17 @@ pub fn AdminPostsView() -> impl IntoView {
                 <div class="d-flex justify-content-between align-items-center w-100 my-2">
                     <div class="d-flex">
 
-                        <a class="btn btn-primary me-2" href="posts/new" role="button">
+                        <A
+                            class="btn btn-primary me-2"
+                            href="/rs-admin/posts/new"
+                            attributes=vec![
+                                ("role", Attribute::String("button".to_string().into())),
+                            ]
+                        >
+
                             <i class="bi bi-plus"></i>
                             New
-                        </a>
+                        </A>
 
                         {move || {
                             if !selected_posts.get().is_empty() {
@@ -139,69 +146,6 @@ pub fn AdminPostsView() -> impl IntoView {
                             }
                         }}
 
-                    </div>
-
-                    <div class="d-flex">
-
-                        <div class="input-group me-2">
-                            <input
-                                type="text"
-                                class="form-control"
-                                placeholder="Search"
-                                aria-label="Search"
-                                aria-describedby="button-addon2"
-                            />
-                            <button class="btn btn-primary" type="button" id="button-addon2">
-                                <i class="bi bi-search"></i>
-                            </button>
-                        </div>
-
-                        <a class="btn btn-primary me-2" href="#" role="button">
-                            Filters
-                        </a>
-
-                        <select
-                            class="form-select me-2"
-                            aria-label="Sort Table By"
-                            style="width: fit-content;"
-                        >
-                            <option value="a.lft ASC" selected="selected">
-                                Ordering ascending
-                            </option>
-                            <option value="a.lft DESC">Ordering descending</option>
-                            <option value="a.published ASC">Status ascending</option>
-                            <option value="a.published DESC">Status descending</option>
-                            <option value="a.title ASC">Title ascending</option>
-                            <option value="a.title DESC">Title descending</option>
-                            <option value="menutype_title ASC">Menu ascending</option>
-                            <option value="menutype_title DESC">Menu descending</option>
-                            <option value="a.home ASC">Home ascending</option>
-                            <option value="a.home DESC">Home descending</option>
-                            <option value="a.access ASC">Access ascending</option>
-                            <option value="a.access DESC">Access descending</option>
-                            <option value="a.id ASC">ID ascending</option>
-                            <option value="a.id DESC">ID descending</option>
-                        </select>
-
-                        <select
-                            class="form-select"
-                            aria-label="Number of items per page"
-                            style="width: fit-content;"
-                        >
-                            <option value="5">5</option>
-                            <option value="10">10</option>
-                            <option value="15">15</option>
-                            <option value="20" selected>
-                                20
-                            </option>
-                            <option value="25">25</option>
-                            <option value="30">30</option>
-                            <option value="50">50</option>
-                            <option value="100">100</option>
-                            <option value="200">200</option>
-                            <option value="500">500</option>
-                            <option value="0">All</option>
-                        </select>
                     </div>
 
                 </div>

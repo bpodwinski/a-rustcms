@@ -12,7 +12,7 @@ pub fn ColumnVisibilityDropdown<T: 'static + Clone>(
     view! {
         <div class="dropdown me-2">
             <button
-                class="btn btn-outline-primary dropdown-toggle"
+                class="btn btn-primary dropdown-toggle"
                 type="button"
                 data-bs-toggle="dropdown"
                 aria-expanded="false"

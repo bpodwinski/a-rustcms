@@ -6,9 +6,7 @@ use std::sync::Arc;
 pub fn Pagination(
     current_page: RwSignal<u32>,
     total_pages: Signal<u32>,
-    items_per_page: RwSignal<u32>,
     on_page_change: Arc<dyn Fn(u32)>,
-    on_items_per_page_change: Arc<dyn Fn(u32)>,
 ) -> impl IntoView {
     let navigate = use_navigate();
 
@@ -30,7 +28,7 @@ pub fn Pagination(
 
     view! {
         <nav aria-label="Page navigation">
-            <ul class="pagination">
+            <ul class="pagination justify-content-center">
                 <li class=move || {
                     if current_page.get() == 1 { "page-item disabled" } else { "page-item" }
                 }>
@@ -125,32 +123,5 @@ pub fn Pagination(
                 </li>
             </ul>
         </nav>
-
-        <select
-            class="form-select"
-            aria-label="Items per page"
-            style="width: fit-content"
-            on:change=move |ev| {
-                let new_items_per_page = event_target_value(&ev).parse::<u32>().unwrap_or(10);
-                on_items_per_page_change(new_items_per_page);
-            }
-        >
-
-            <option value="5" selected=move || items_per_page.get() == 5>
-                {"5"}
-            </option>
-            <option value="10" selected=move || items_per_page.get() == 10>
-                {"10"}
-            </option>
-            <option value="20" selected=move || items_per_page.get() == 20>
-                {"20"}
-            </option>
-            <option value="50" selected=move || items_per_page.get() == 50>
-                {"50"}
-            </option>
-            <option value="100" selected=move || items_per_page.get() == 100>
-                {"100"}
-            </option>
-        </select>
     }
 }

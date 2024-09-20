@@ -51,18 +51,65 @@ pub fn DataTable<T: Id + 'static + Clone>(
 
                     <div class="d-flex justify-content-end align-items-center w-100 my-2">
 
+                        <div class="input-group me-2" style="width: fit-content">
+                            <input
+                                type="text"
+                                class="form-control"
+                                placeholder="Search"
+                                aria-label="Search"
+                                aria-describedby="Search in datas"
+                                style="width: 300px"
+                            />
+                            <button class="btn btn-primary" type="button" id="button-addon2">
+                                <i class="bi bi-search"></i>
+                            </button>
+                        </div>
+
+                        <a class="btn btn-primary me-2" href="#" role="button">
+                            Filters
+                        </a>
+
                         <SortSelect
                             columns=columns.into()
                             sort_column=sort_column
                             sort_order=sort_order
                         />
 
+                        <select
+                            class="form-select me-2"
+                            aria-label="Items per page"
+                            style="width: fit-content"
+                            on:change=move |ev| {
+                                let new_items_per_page = event_target_value(&ev)
+                                    .parse::<u32>()
+                                    .unwrap_or(10);
+                                on_items_per_page_change(new_items_per_page);
+                            }
+                        >
+
+                            <option value="5" selected=move || items_per_page.get() == 5>
+                                {"5"}
+                            </option>
+                            <option value="10" selected=move || items_per_page.get() == 10>
+                                {"10"}
+                            </option>
+                            <option value="20" selected=move || items_per_page.get() == 20>
+                                {"20"}
+                            </option>
+                            <option value="50" selected=move || items_per_page.get() == 50>
+                                {"50"}
+                            </option>
+                            <option value="100" selected=move || items_per_page.get() == 100>
+                                {"100"}
+                            </option>
+                        </select>
+
                         <ColumnVisibilityDropdown columns=columns.into()/>
 
                     </div>
 
                     // Table rendering
-                    <table class="table table-striped" aria-live="polite">
+                    <table class="table" aria-live="polite">
 
                         <DataTableHeader
                             sort_column=sort_column
@@ -150,9 +197,7 @@ pub fn DataTable<T: Id + 'static + Clone>(
                     <Pagination
                         current_page=current_page
                         total_pages=total_pages.into()
-                        items_per_page=items_per_page
                         on_page_change=on_page_change.clone()
-                        on_items_per_page_change=on_items_per_page_change.clone()
                     />
 
                 </div>
