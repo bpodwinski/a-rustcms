@@ -26,8 +26,8 @@ pub fn DataTable<T: Id + 'static + Clone>(
     columns: Signal<Vec<TableColumn<T>>>,
     selected_datas: RwSignal<HashSet<u32>>,
     total_items: Signal<u32>,
-    current_page: RwSignal<u32>,
     items_per_page: RwSignal<u32>,
+    page: RwSignal<u32>,
     on_page_change: Arc<dyn Fn(u32)>,
     on_items_per_page_change: Arc<dyn Fn(u32)>,
 ) -> impl IntoView {
@@ -198,8 +198,8 @@ pub fn DataTable<T: Id + 'static + Clone>(
                     </table>
 
                     <DataTablePagination
-                        current_page=current_page
-                        total_pages=total_pages.into()
+                        page=page
+                        page_count=total_pages
                         on_page_change=on_page_change.clone()
                     />
 

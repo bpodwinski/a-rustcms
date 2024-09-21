@@ -23,12 +23,7 @@ pub fn AdminPostsView() -> impl IntoView {
 
     // Pagination
     let params = use_params_map();
-    let page = params.with_untracked(|params| {
-        params
-            .get("page")
-            .and_then(|p| p.parse::<u32>().ok())
-            .unwrap_or(1)
-    });
+    let page = params.with_untracked(|params| params.get("page").and_then(|p| p.parse::<u32>().ok()).unwrap_or(1));
     let current_page = create_rw_signal(page);
     let items_per_page = create_rw_signal(50);
     let (total_items_signal, set_total_items_signal) = create_signal(0);
@@ -250,8 +245,8 @@ pub fn AdminPostsView() -> impl IntoView {
                             columns=columns.into()
                             selected_datas=selected_posts
                             total_items=total_items_signal.into()
-                            current_page=current_page
                             items_per_page=items_per_page
+                            page=current_page
                             on_page_change=Arc::new(move |new_page| {
                                 current_page.set(new_page);
                             })

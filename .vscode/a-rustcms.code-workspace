@@ -21,15 +21,15 @@
     },
     "editor.rulers": [
       {
-        "column": 80,
+        "column": 100,
         "color": "#00ff2a2a"
       },
       {
-        "column": 100,
+        "column": 120,
         "color": "#ffae002a"
       },
       {
-        "column": 120,
+        "column": 140,
         "color": "#ff11002a"
       }
     ]

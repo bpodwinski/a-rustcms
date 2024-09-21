@@ -4,8 +4,7 @@ use serde_json::Value;
 use std::collections::HashMap;
 
 use crate::{
-    components::front::loading_component::LoadingComponent,
-    services::admin::api::posts_api::get_posts,
+    components::front::loading_component::LoadingComponent, services::admin::api::posts_api::get_posts,
     utils::add_class_util::add_class,
 };
 
