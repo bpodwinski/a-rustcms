@@ -19,16 +19,20 @@ pub fn DataTablePagination(
     /// Current page_num
     #[prop(into)]
     page: RwSignal<u32>,
+
     /// Total number of pages
     #[prop(into)]
     page_count: Signal<u32>,
+
     /// Callback when page changes
     on_page_change: Arc<dyn Fn(u32) + 'static>,
+
+    /// Maximum number of visible pages in the pagination (default is 6)
+    #[prop(default = 6, into)]
+    max_visible_pages: u32,
 ) -> impl IntoView {
     let navigate = use_navigate();
     let params = use_params_map();
-
-    const MAX_VISIBLE_PAGES: u32 = 8;
 
     /// Navigates to the given page number and updates URL and state.
     ///
@@ -160,7 +164,7 @@ pub fn DataTablePagination(
     // Get the total number of pages and the current page number
     let total_pages_val = page_count.get();
     let current_page_val = page.get();
-    let (start_page, end_page) = visible_page_range(current_page_val, total_pages_val, MAX_VISIBLE_PAGES);
+    let (start_page, end_page) = visible_page_range(current_page_val, total_pages_val, max_visible_pages);
 
     view! {
         <nav aria-label="Page navigation">
