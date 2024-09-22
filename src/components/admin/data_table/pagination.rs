@@ -143,9 +143,10 @@ pub fn DataTablePagination(
         let class = if is_disabled { "page-item disabled" } else { "page-item" };
         let active_class = if page_num == page_from_url { " active" } else { "" };
         let class_with_active = format!("{}{}", class, active_class);
+        let aria_current = if page_num == page_from_url { "aria-current" } else { "" };
 
         view! {
-            <li class=class_with_active>
+            <li class=class_with_active aria-current=aria_current>
                 <a
                     class="page-link"
                     href="#"
@@ -220,9 +221,9 @@ pub fn DataTablePagination(
                         } else {
                             "page-item"
                         };
-                        let on_page_change = on_page_change.clone();
-                        let navigate = navigate.clone();
-                        let current_url = current_url.clone();
+                        let on_page_change_clone = on_page_change.clone();
+                        let navigate_clone = navigate.clone();
+                        let current_url_clone = current_url.clone();
                         view! {
                             <li class=page_class>
                                 <a
@@ -232,9 +233,9 @@ pub fn DataTablePagination(
                                         page_num,
                                         page,
                                         total_pages_val,
-                                        on_page_change.clone(),
-                                        navigate.clone(),
-                                        current_url.clone(),
+                                        on_page_change_clone.clone(),
+                                        navigate_clone.clone(),
+                                        current_url_clone.clone(),
                                     )
                                 >
 
