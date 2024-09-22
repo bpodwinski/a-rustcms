@@ -28,8 +28,8 @@ pub fn DataTable<T: Id + 'static + Clone>(
     total_items: Signal<u32>,
     items_per_page: RwSignal<u32>,
     page: RwSignal<u32>,
-    on_page_change: Arc<dyn Fn(u32)>,
-    on_items_per_page_change: Arc<dyn Fn(u32)>,
+    on_page_change: impl Fn(u32) + Clone + 'static,
+    on_items_per_page_change: impl Fn(u32) + Clone + 'static,
 ) -> impl IntoView {
     let sort_column: RwSignal<Option<usize>> = create_rw_signal(None);
     let sort_order = create_rw_signal(SortOrder::Descending);
@@ -200,7 +200,7 @@ pub fn DataTable<T: Id + 'static + Clone>(
                     <DataTablePagination
                         page=page
                         page_count=total_pages
-                        on_page_change=on_page_change.clone()
+                        on_page_change=on_page_change
                     />
 
                 </div>

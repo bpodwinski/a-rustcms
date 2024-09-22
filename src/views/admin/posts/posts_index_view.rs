@@ -25,8 +25,11 @@ pub fn AdminPostsView() -> impl IntoView {
     let params = use_params_map();
     let page = params.with_untracked(|params| params.get("page").and_then(|p| p.parse::<u32>().ok()).unwrap_or(1));
     let current_page = create_rw_signal(page);
-    let items_per_page = create_rw_signal(50);
+    let items_per_page = create_rw_signal(100);
     let (total_items_signal, set_total_items_signal) = create_signal(0);
+    let on_page_change = move |new_page: u32| {
+        current_page.set(new_page);
+    };
 
     // Resource pour les posts paginés
     let posts = create_resource(
@@ -247,13 +250,10 @@ pub fn AdminPostsView() -> impl IntoView {
                             total_items=total_items_signal.into()
                             items_per_page=items_per_page
                             page=current_page
-                            on_page_change=Arc::new(move |new_page| {
-                                current_page.set(new_page);
-                            })
-
-                            on_items_per_page_change=Arc::new(move |new_items_per_page| {
+                            on_page_change=on_page_change
+                            on_items_per_page_change=move |new_items_per_page| {
                                 items_per_page.set(new_items_per_page.try_into().unwrap());
-                            })
+                            }
                         />
                     }
                 } else {

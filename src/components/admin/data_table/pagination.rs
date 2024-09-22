@@ -1,6 +1,5 @@
 use leptos::*;
-use leptos_router::{use_navigate, use_params_map, NavigateOptions};
-use std::sync::Arc;
+use leptos_router::{use_location, use_navigate, use_params_map, NavigateOptions};
 
 /// Component responsible for rendering pagination controls for a data table.
 ///
@@ -25,14 +24,18 @@ pub fn DataTablePagination(
     page_count: Signal<u32>,
 
     /// Callback when page changes
-    on_page_change: Arc<dyn Fn(u32) + 'static>,
+    on_page_change: impl Fn(u32) + Clone + 'static,
 
     /// Maximum number of visible pages in the pagination (default is 6)
     #[prop(default = 6, into)]
     max_visible_pages: u32,
 ) -> impl IntoView {
     let navigate = use_navigate();
+    let location = use_location();
     let params = use_params_map();
+
+    // Extract current URL and remove the trailing page number if necessary
+    let current_url = location.pathname.get().clone();
 
     /// Navigates to the given page number and updates URL and state.
     ///
@@ -46,8 +49,9 @@ pub fn DataTablePagination(
         mut page_num: u32,
         page: RwSignal<u32>,
         page_count: u32,
-        on_page_change: Arc<dyn Fn(u32) + 'static>,
+        on_page_change: impl Fn(u32) + Clone + 'static,
         navigate: impl Fn(&str, NavigateOptions) + Clone + 'static,
+        current_url: String,
     ) {
         // The current page must not exceed the page total
         page_num = page_num.clamp(1, page_count);
@@ -56,8 +60,10 @@ pub fn DataTablePagination(
         page.set(page_num);
         on_page_change(page_num);
 
-        // Navigate to the new page URL
-        let url = format!("rs-admin/posts/page/{}", page_num);
+        // Update the URL dynamically by replacing the page number
+        let base_url = current_url.trim_end_matches(|c: char| c.is_numeric() || c == '/');
+        let url = format!("{}/{}", base_url, page_num);
+
         let options = NavigateOptions {
             replace: true,
             ..NavigateOptions::default()
@@ -72,6 +78,7 @@ pub fn DataTablePagination(
         let page_count = page_count.clone();
         let navigate = navigate.clone();
         let on_page_change = on_page_change.clone();
+        let current_url = current_url.clone();
 
         move || {
             let total_pages_val = page_count.get();
@@ -84,12 +91,11 @@ pub fn DataTablePagination(
                     total_pages_val,
                     on_page_change.clone(),
                     navigate.clone(),
+                    current_url.clone(),
                 );
             }
         }
     };
-
-    // Track changes in parameters and redirect if necessary
     params.track();
     check_and_redirect_invalid_page();
 
@@ -129,9 +135,10 @@ pub fn DataTablePagination(
         page_from_url: u32,
         page: RwSignal<u32>,
         page_count: u32,
-        on_page_change: Arc<dyn Fn(u32) + 'static>,
+        on_page_change: impl Fn(u32) + Clone + 'static,
         navigate: impl Fn(&str, NavigateOptions) + Clone + 'static,
         is_disabled: bool,
+        current_url: String,
     ) -> impl IntoView {
         let class = if is_disabled { "page-item disabled" } else { "page-item" };
         let active_class = if page_num == page_from_url { " active" } else { "" };
@@ -150,6 +157,7 @@ pub fn DataTablePagination(
                                 page_count,
                                 on_page_change.clone(),
                                 navigate.clone(),
+                                current_url.clone(),
                             );
                         }
                     }
@@ -178,6 +186,7 @@ pub fn DataTablePagination(
                     on_page_change.clone(),
                     navigate.clone(),
                     current_page_val == 1,
+                    current_url.clone(),
                 )}
                 {if start_page > 1 {
                     view! {
@@ -191,6 +200,7 @@ pub fn DataTablePagination(
                                 on_page_change.clone(),
                                 navigate.clone(),
                                 false,
+                                current_url.clone(),
                             )} <li class="page-item disabled">
                                 <span class="page-link">{"..."}</span>
                             </li>
@@ -210,8 +220,9 @@ pub fn DataTablePagination(
                         } else {
                             "page-item"
                         };
-                        let on_page_change_clone = on_page_change.clone();
-                        let navigate_clone = navigate.clone();
+                        let on_page_change = on_page_change.clone();
+                        let navigate = navigate.clone();
+                        let current_url = current_url.clone();
                         view! {
                             <li class=page_class>
                                 <a
@@ -221,8 +232,9 @@ pub fn DataTablePagination(
                                         page_num,
                                         page,
                                         total_pages_val,
-                                        on_page_change_clone.clone(),
-                                        navigate_clone.clone(),
+                                        on_page_change.clone(),
+                                        navigate.clone(),
+                                        current_url.clone(),
                                     )
                                 >
 
@@ -248,6 +260,7 @@ pub fn DataTablePagination(
                                 on_page_change.clone(),
                                 navigate.clone(),
                                 false,
+                                current_url.clone(),
                             )}
                         </>
                     }
@@ -267,6 +280,7 @@ pub fn DataTablePagination(
                     on_page_change,
                     navigate,
                     current_page_val == total_pages_val,
+                    current_url,
                 )}
 
             </ul>
