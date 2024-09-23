@@ -1,12 +1,11 @@
 use leptos::*;
 use std::collections::HashSet;
 
+use super::{data_table_component::TableColumn, sort::SortOrder};
 use crate::{
     components::admin::data_table::{selection::DataTableSelectAllCheckbox, sort::toggle_sort},
     models::admin::posts_model::Id,
 };
-
-use super::{data_table_component::TableColumn, sort::SortOrder};
 
 #[component]
 pub fn DataTableHeader<T: Id + 'static + Clone>(
@@ -15,6 +14,7 @@ pub fn DataTableHeader<T: Id + 'static + Clone>(
     columns: Signal<Vec<TableColumn<T>>>,
     data: Signal<Vec<T>>,
     selected_datas: RwSignal<HashSet<u32>>,
+    on_sort_change: impl Fn(Option<usize>, SortOrder) + Clone + 'static,
 ) -> impl IntoView {
     view! {
         <thead>
@@ -31,61 +31,42 @@ pub fn DataTableHeader<T: Id + 'static + Clone>(
                 </th>
 
                 {move || {
+                    let columns = columns.get().to_owned();
                     columns
-                        .get()
                         .iter()
                         .enumerate()
                         .map(|(index, column)| {
                             if column.visible.get() {
+                                let on_sort_change = on_sort_change.clone();
                                 Some(
                                     view! {
-                                        <th
-                                            scope="col"
-                                            aria-sort=move || {
-                                                if sort_column.get() == Some(index) {
-                                                    match sort_order.get() {
-                                                        SortOrder::Ascending => "ascending",
-                                                        SortOrder::Descending => "descending",
+                                        <th scope="col">
+
+                                            <button
+                                                class="btn btn-dark"
+                                                on:click=move |_| toggle_sort(
+                                                    sort_column,
+                                                    sort_order,
+                                                    index,
+                                                    on_sort_change.clone(),
+                                                )
+                                            >
+
+                                                {column.title}
+
+                                                {move || {
+                                                    if sort_column.get() == Some(index) {
+                                                        if sort_order.get() == SortOrder::Ascending {
+                                                            view! { <i class="bi bi-sort-down-alt ms-1"></i> }
+                                                        } else {
+                                                            view! { <i class="bi bi-sort-up ms-1"></i> }
+                                                        }
+                                                    } else {
+                                                        view! { <i class="bi bi-sort-up text-secondary ms-1"></i> }
                                                     }
-                                                } else {
-                                                    "none"
-                                                }
-                                            }
-                                        >
+                                                }}
 
-                                            {if column.sort_fn.is_some() {
-                                                view! {
-                                                    <button
-                                                        class="btn btn-dark"
-                                                        on:click=move |_| toggle_sort(
-                                                            sort_column,
-                                                            sort_order,
-                                                            index,
-                                                        )
-
-                                                        aria-label=format!("Sort by {}", column.title)
-                                                    >
-
-                                                        {column.title}
-                                                        {move || {
-                                                            if sort_column.get() == Some(index) {
-                                                                if sort_order.get() == SortOrder::Ascending {
-                                                                    view! { <i class="bi bi-sort-down-alt ms-1"></i> }
-                                                                } else {
-                                                                    view! { <i class="bi bi-sort-up ms-1"></i> }
-                                                                }
-                                                            } else {
-                                                                view! { <i class="bi bi-sort-up text-secondary ms-1"></i> }
-                                                            }
-                                                        }}
-
-                                                    </button>
-                                                }
-                                            } else {
-                                                view! {
-                                                    <button class="btn btn-dark">{column.title}</button>
-                                                }
-                                            }}
+                                            </button>
 
                                         </th>
                                     },

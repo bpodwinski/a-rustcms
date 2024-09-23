@@ -7,7 +7,7 @@ use crate::{
         header::DataTableHeader,
         pagination::DataTablePagination,
         selection::{DataTableCheckbox, TotalItems},
-        sort::{sort_datas, DataTableSortSelect, SortOrder},
+        sort::SortOrder,
     },
     models::admin::posts_model::Id,
 };
@@ -16,7 +16,6 @@ use crate::{
 pub struct TableColumn<T> {
     pub title: &'static str,
     pub value_fn: Arc<dyn Fn(&T) -> View + Send + Sync>,
-    pub sort_fn: Option<Arc<dyn Fn(&T, &T) -> std::cmp::Ordering + Send + Sync>>,
     pub visible: RwSignal<bool>,
 }
 
@@ -28,12 +27,12 @@ pub fn DataTable<T: Id + 'static + Clone>(
     total_items: Signal<u32>,
     items_per_page: RwSignal<u32>,
     page: RwSignal<u32>,
+    on_sort_change: impl Fn(Option<usize>, SortOrder) + Clone + 'static,
+    sort_column: RwSignal<Option<usize>>,
+    sort_order: RwSignal<SortOrder>,
     on_page_change: impl Fn(u32) + Clone + 'static,
     on_items_per_page_change: impl Fn(u32) + Clone + 'static,
 ) -> impl IntoView {
-    let sort_column: RwSignal<Option<usize>> = create_rw_signal(None);
-    let sort_order = create_rw_signal(SortOrder::Descending);
-
     let total_pages = create_memo(move |_| {
         let total_items = total_items.get();
         let per_page = items_per_page.get();
@@ -68,12 +67,6 @@ pub fn DataTable<T: Id + 'static + Clone>(
                         <a class="btn btn-primary me-2" href="#" role="button">
                             Filters
                         </a>
-
-                        <DataTableSortSelect
-                            columns=columns.into()
-                            sort_column=sort_column
-                            sort_order=sort_order
-                        />
 
                         <select
                             class="form-select me-2"
@@ -117,18 +110,13 @@ pub fn DataTable<T: Id + 'static + Clone>(
                             columns=columns.into()
                             data=data
                             selected_datas=selected_datas
+                            on_sort_change=on_sort_change
                         />
 
                         <tbody>
 
                             {move || {
-                                let mut data_list = data.get();
-                                sort_datas(
-                                    &mut data_list,
-                                    &columns.get(),
-                                    sort_column.get(),
-                                    sort_order.get(),
-                                );
+                                let data_list = data.get();
                                 if !data_list.is_empty() {
                                     view! {
                                         <>

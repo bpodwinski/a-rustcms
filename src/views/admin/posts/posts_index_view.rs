@@ -6,7 +6,10 @@ use leptos_router::{use_params_map, A};
 use crate::{
     components::{
         admin::{
-            data_table::data_table_component::{DataTable, TableColumn},
+            data_table::{
+                data_table_component::{DataTable, TableColumn},
+                sort::SortOrder,
+            },
             header_content_component::HeaderContent,
             modal_component::*,
         },
@@ -21,20 +24,45 @@ use crate::{
 pub fn AdminPostsView() -> impl IntoView {
     add_class("body", "posts");
 
-    // Pagination
     let params = use_params_map();
     let page = params.with_untracked(|params| params.get("page").and_then(|p| p.parse::<u32>().ok()).unwrap_or(1));
     let current_page = create_rw_signal(page);
     let items_per_page = create_rw_signal(100);
+    let sort_column: RwSignal<Option<usize>> = create_rw_signal(None);
+    let sort_order = create_rw_signal(SortOrder::Descending);
     let (total_items_signal, set_total_items_signal) = create_signal(0);
+
     let on_page_change = move |new_page: u32| {
         current_page.set(new_page);
     };
 
-    // Resource pour les posts paginés
+    let on_sort_change = move |column: Option<usize>, order: SortOrder| {
+        sort_column.set(column);
+        sort_order.set(order);
+    };
+
     let posts = create_resource(
-        move || (current_page.get(), items_per_page.get()),
-        move |(page, limit)| async move { get_posts(page, limit.try_into().unwrap()).await },
+        move || {
+            let sort_column_string = match sort_column.get() {
+                Some(0) => "title".to_string(),        // Mapping de l'index 0 à "id"
+                Some(1) => "date_created".to_string(), // Mapping de l'index 1 à "title"
+                Some(2) => "author".to_string(),       // Autre mapping
+                _ => "id".to_string(),                 // Valeur par défaut si aucun index valide
+            };
+
+            let sort_order_string = match sort_order.get() {
+                SortOrder::Ascending => "asc".to_string(),
+                SortOrder::Descending => "desc".to_string(),
+            };
+
+            (
+                current_page.get(),
+                items_per_page.get(),
+                sort_column_string, // Conversion en String
+                sort_order_string,  // Conversion en String
+            )
+        },
+        move |(page, limit, sort_column, sort_order)| async move { get_posts(page, limit, sort_column, sort_order).await },
     );
 
     let (loaded_posts, set_loaded_posts) = create_signal(Vec::<PostStruct>::new());
@@ -207,7 +235,6 @@ pub fn AdminPostsView() -> impl IntoView {
                                     }
                                         .into()
                                 }),
-                                sort_fn: Some(Arc::new(|a, b| a.title.cmp(&b.title))),
                                 visible: create_rw_signal(true),
                             },
                             TableColumn {
@@ -221,7 +248,6 @@ pub fn AdminPostsView() -> impl IntoView {
                                     }
                                         .into()
                                 }),
-                                sort_fn: Some(Arc::new(|a, b| a.date_created.cmp(&b.date_created))),
                                 visible: create_rw_signal(true),
                             },
                             TableColumn {
@@ -229,7 +255,6 @@ pub fn AdminPostsView() -> impl IntoView {
                                 value_fn: Arc::new(|post: &PostStruct| {
                                     view! { <>{post.author_id}</> }.into()
                                 }),
-                                sort_fn: Some(Arc::new(|a, b| a.author_id.cmp(&b.author_id))),
                                 visible: create_rw_signal(true),
                             },
                             TableColumn {
@@ -237,7 +262,6 @@ pub fn AdminPostsView() -> impl IntoView {
                                 value_fn: Arc::new(|post: &PostStruct| {
                                     view! { <>{post.id}</> }.into()
                                 }),
-                                sort_fn: Some(Arc::new(|a, b| a.id.cmp(&b.id))),
                                 visible: create_rw_signal(true),
                             },
                         ],
@@ -250,6 +274,9 @@ pub fn AdminPostsView() -> impl IntoView {
                             total_items=total_items_signal.into()
                             items_per_page=items_per_page
                             page=current_page
+                            on_sort_change=on_sort_change
+                            sort_column=sort_column
+                            sort_order=sort_order
                             on_page_change=on_page_change
                             on_items_per_page_change=move |new_items_per_page| {
                                 items_per_page.set(new_items_per_page.try_into().unwrap());

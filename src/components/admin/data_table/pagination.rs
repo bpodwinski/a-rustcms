@@ -1,5 +1,5 @@
 use leptos::*;
-use leptos_router::{use_location, use_navigate, use_params_map, NavigateOptions};
+use leptos_router::{use_location, use_navigate, NavigateOptions};
 
 /// Component responsible for rendering pagination controls for a data table.
 ///
@@ -32,10 +32,10 @@ pub fn DataTablePagination(
 ) -> impl IntoView {
     let navigate = use_navigate();
     let location = use_location();
-    let params = use_params_map();
+    //let params = use_params_map();
 
     // Extract current URL and remove the trailing page number if necessary
-    let current_url = location.pathname.get().clone();
+    let current_url = location.pathname.get_untracked().clone();
 
     /// Navigates to the given page number and updates URL and state.
     ///
@@ -73,7 +73,7 @@ pub fn DataTablePagination(
     }
 
     // Check and redirect if the page number is out of bounds
-    let check_and_redirect_invalid_page = {
+    /*     let check_and_redirect_invalid_page = {
         let page = page.clone();
         let page_count = page_count.clone();
         let navigate = navigate.clone();
@@ -81,8 +81,8 @@ pub fn DataTablePagination(
         let current_url = current_url.clone();
 
         move || {
-            let total_pages_val = page_count.get();
-            let current_page_val = page.get();
+            let total_pages_val = page_count.get_untracked();
+            let current_page_val = page.get_untracked();
 
             if current_page_val > total_pages_val || current_page_val < 1 {
                 go_to_page(
@@ -97,7 +97,7 @@ pub fn DataTablePagination(
         }
     };
     params.track();
-    check_and_redirect_invalid_page();
+    check_and_redirect_invalid_page(); */
 
     /// Determines the range of pages visible in the pagination bar.
     ///
@@ -171,8 +171,9 @@ pub fn DataTablePagination(
     }
 
     // Get the total number of pages and the current page number
-    let total_pages_val = page_count.get();
-    let current_page_val = page.get();
+    let total_pages_val = page_count.get_untracked();
+    let current_page_val = page.get_untracked();
+
     let (start_page, end_page) = visible_page_range(current_page_val, total_pages_val, max_visible_pages);
 
     view! {

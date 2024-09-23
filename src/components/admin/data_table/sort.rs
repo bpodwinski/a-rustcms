@@ -1,8 +1,6 @@
 use leptos::*;
 
-use super::data_table_component::TableColumn;
-
-#[derive(Clone, Copy, PartialEq, Eq)]
+#[derive(Clone, Debug, Copy, PartialEq, Eq)]
 pub enum SortOrder {
     Ascending,
     Descending,
@@ -11,42 +9,34 @@ pub enum SortOrder {
 pub fn toggle_sort(
     sort_column: RwSignal<Option<usize>>,
     sort_order: RwSignal<SortOrder>,
-    column_index: usize,
+    index: usize,
+    on_sort_change: impl Fn(Option<usize>, SortOrder) + Clone + 'static,
 ) {
-    if sort_column.get() == Some(column_index) {
-        sort_order.update(|order| {
-            *order = match *order {
-                SortOrder::Ascending => SortOrder::Descending,
-                SortOrder::Descending => SortOrder::Ascending,
-            };
-        });
+    if let Some(current_index) = sort_column.get() {
+        if current_index == index {
+            if sort_order.get() == SortOrder::Ascending {
+                sort_order.set(SortOrder::Descending);
+            } else {
+                sort_order.set(SortOrder::Ascending);
+            }
+        } else {
+            sort_column.set(Some(index));
+            sort_order.set(SortOrder::Ascending);
+        }
     } else {
-        sort_column.set(Some(column_index));
+        sort_column.set(Some(index));
         sort_order.set(SortOrder::Ascending);
     }
+
+    on_sort_change(Some(index), sort_order.get());
 }
 
-pub fn sort_datas<T: 'static + Clone>(
-    datas: &mut Vec<T>,
-    columns: &Vec<TableColumn<T>>,
-    sort_column: Option<usize>,
-    sort_order: SortOrder,
-) {
-    if let Some(col_index) = sort_column {
-        if let Some(sort_fn) = &columns[col_index].sort_fn {
-            match sort_order {
-                SortOrder::Ascending => datas.sort_by(|a, b| sort_fn(a, b)),
-                SortOrder::Descending => datas.sort_by(|a, b| sort_fn(b, a)),
-            }
-        }
-    }
-}
-
-#[component]
+/* #[component]
 pub fn DataTableSortSelect<T: 'static + Clone>(
     columns: Signal<Vec<TableColumn<T>>>,
     sort_column: RwSignal<Option<usize>>,
     sort_order: RwSignal<SortOrder>,
+    on_sort_change: impl Fn(String, String) + Clone + 'static,
 ) -> impl IntoView {
     view! {
         <select
@@ -55,7 +45,17 @@ pub fn DataTableSortSelect<T: 'static + Clone>(
             style="width: fit-content"
             on:change=move |ev| {
                 if let Ok(selected_index) = event_target_value(&ev).parse::<usize>() {
-                    toggle_sort(sort_column, sort_order, selected_index);
+                    let column_title = columns.get()[selected_index].title.to_string();
+                    if sort_column.get() != Some(selected_index) {
+                        sort_order.set(SortOrder::Ascending);
+                    }
+                    toggle_sort(
+                        sort_column,
+                        sort_order,
+                        selected_index,
+                        column_title.clone(),
+                        on_sort_change.clone(),
+                    );
                 }
             }
         >
@@ -93,4 +93,4 @@ pub fn DataTableSortSelect<T: 'static + Clone>(
 
         </select>
     }
-}
+} */

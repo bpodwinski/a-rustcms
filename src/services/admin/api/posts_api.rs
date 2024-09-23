@@ -1,8 +1,7 @@
 use reqwest::{Client, Response};
+use web_sys::console;
 
-use crate::models::admin::posts_model::{
-    PaginatedPosts, PostNewStruct, PostRequest, PostStruct, PostsIds,
-};
+use crate::models::admin::posts_model::{PaginatedPosts, PostNewStruct, PostRequest, PostStruct, PostsIds};
 
 const BASE_URL: &str = "http://127.0.0.1:6988/api/v1/posts";
 
@@ -13,10 +12,26 @@ where
     response.json::<T>().await.map_err(|e| e.to_string())
 }
 
-pub async fn get_posts(page: u32, limit: u32) -> Result<PaginatedPosts, String> {
+pub async fn get_posts(
+    page: u32,
+    limit: u32,
+    sort_column: String,
+    sort_order: String,
+) -> Result<PaginatedPosts, String> {
+    console::log_1(
+        &format!(
+            "Requête get_posts avec page: {}, limit: {}, sort_column: {}, sort_order: {}",
+            page, limit, sort_column, sort_order
+        )
+        .into(),
+    );
+
     let client = Client::new();
 
-    let url = format!("{BASE_URL}?page={}&limit={}", page, limit);
+    let url = format!(
+        "{BASE_URL}?page={}&limit={}&sort_column={}&sort_order={}",
+        page, limit, sort_column, sort_order
+    );
 
     let response = client
         .get(&url)
@@ -26,10 +41,7 @@ pub async fn get_posts(page: u32, limit: u32) -> Result<PaginatedPosts, String> 
         .error_for_status()
         .map_err(|e| e.to_string())?;
 
-    let paginated_posts = response
-        .json::<PaginatedPosts>()
-        .await
-        .map_err(|e| e.to_string())?;
+    let paginated_posts = response.json::<PaginatedPosts>().await.map_err(|e| e.to_string())?;
 
     Ok(paginated_posts)
 }

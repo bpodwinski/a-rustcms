@@ -4,4 +4,4 @@ mod column_visibility;
 mod header;
 mod pagination;
 mod selection;
-mod sort;
+pub mod sort;
