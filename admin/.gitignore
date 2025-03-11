@@ -1,0 +1,8 @@
+/target
+.env
+.env.test
+.lock
+/.idea/
+Cargo.lock
+
+.fake

@@ -1,0 +1,37 @@
+[package]
+name = "a-rustcms-admin"
+version = "0.1.0"
+authors = ["Benoît Podwinski <me@benoitpodwinski.com>"]
+edition = "2021"
+
+[dependencies]
+ntex = { version = "2.6", features = ["tokio"] }
+ntex-cors = "2.0"
+serde = "1.0"
+serde_json = "1.0"
+dotenv = "0.15"
+tokio = { version = "1.40", features = ["full"] }
+sqlx = { version = "0.8", features = [
+    "runtime-tokio",
+    "postgres",
+    "chrono",
+    "time",
+    "macros",
+] }
+http = "1.1"
+chrono = { version = "0.4", features = ["serde"] }
+validator = { version = "0.18", features = ["derive"] }
+regex = "1.10"
+anyhow = "1.0"
+reqwest = { version = "0.12", features = ["json"] }
+utoipa = "4"
+utoipa-swagger-ui = "7"
+log = "0.4"
+env_logger = "0.11"
+jsonwebtoken = "9.3"
+deunicode = "1.6"
+argon2 = "0.5"
+
+[dev-dependencies]
+sqlx = { version = "0.8", features = ["postgres", "migrate"] }
+time = "0.3"
