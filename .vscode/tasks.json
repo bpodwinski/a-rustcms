@@ -1,15 +1,6 @@
 {
   "version": "2.0.0",
   "tasks": [
-    // Front
-    {
-      "label": "build_debug_front",
-      "detail": "Builds the Rust debug binary",
-      "type": "shell",
-      "command": "cargo leptos watch -p front",
-      "group": "build",
-      "problemMatcher": ["$rustc"]
-    },
     // Admin
     {
       "label": "build_debug_admin",

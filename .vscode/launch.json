@@ -3,7 +3,7 @@
   "compounds": [
     {
       "name": "debug_app",
-      "configurations": ["debug_admin", "debug_front"]
+      "configurations": ["debug_front", "debug_admin"]
     }
   ],
   "configurations": [
@@ -24,11 +24,10 @@
       "name": "debug_front",
       "type": "lldb",
       "request": "launch",
-      "program": "${workspaceFolder}/target/debug/front.exe",
-      "args": [],
+      "program": "cargo",
+      "args": ["leptos", "watch", "-p", "front"],
       "cwd": "${workspaceFolder}",
       "console": "integratedTerminal",
-      "preLaunchTask": "build_debug_front",
       "sourceLanguages": ["rust"]
     }
   ]
