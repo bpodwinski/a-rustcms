@@ -1,26 +1,34 @@
 {
   "version": "0.2.0",
-  "configurations": [
+  "compounds": [
     {
-      "name": "Debug with LLDB",
+      "name": "debug_app",
+      "configurations": ["debug_admin", "debug_front"]
+    }
+  ],
+  "configurations": [
+    // Admin
+    {
+      "name": "debug_admin",
       "type": "lldb",
       "request": "launch",
-      "program": "${workspaceFolder}/target/debug/${workspaceFolderBasename}.exe",
+      "program": "${workspaceFolder}/target/debug/admin.exe",
       "args": [],
       "cwd": "${workspaceFolder}",
       "console": "integratedTerminal",
-      "preLaunchTask": "SQLx Prepare and Build Debug",
+      "preLaunchTask": "sqlx_prepare_build_debug",
       "sourceLanguages": ["rust"]
     },
+    // Front
     {
-      "name": "Watch with LLDB",
+      "name": "debug_front",
       "type": "lldb",
       "request": "launch",
-      "program": "${workspaceFolder}/target/debug/${workspaceFolderBasename}.exe",
+      "program": "${workspaceFolder}/target/debug/front.exe",
       "args": [],
       "cwd": "${workspaceFolder}",
       "console": "integratedTerminal",
-      "preLaunchTask": "SQLx Prepare and Watch",
+      "preLaunchTask": "build_debug_front",
       "sourceLanguages": ["rust"]
     }
   ]

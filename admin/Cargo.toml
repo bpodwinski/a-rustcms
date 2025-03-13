@@ -1,5 +1,5 @@
 [package]
-name = "a-rustcms-admin"
+name = "admin"
 version = "0.1.0"
 authors = ["Benoît Podwinski <me@benoitpodwinski.com>"]
 edition = "2021"

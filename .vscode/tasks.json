@@ -1,0 +1,51 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    // Front
+    {
+      "label": "build_debug_front",
+      "detail": "Builds the Rust debug binary",
+      "type": "shell",
+      "command": "cargo leptos watch -p front",
+      "group": "build",
+      "problemMatcher": ["$rustc"]
+    },
+    // Admin
+    {
+      "label": "build_debug_admin",
+      "detail": "Builds the Rust debug binary",
+      "type": "shell",
+      "command": "cargo build -p admin",
+      "group": "build",
+      "problemMatcher": ["$rustc"]
+    },
+    // Admin SQLx
+    {
+      "label": "sqlx_prepare",
+      "detail": "Prepares the SQLx query data",
+      "type": "shell",
+      "command": "cargo sqlx prepare",
+      "options": {
+        "cwd": "admin"
+      },
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "sqlx_prepare_build_debug",
+      "dependsOn": ["sqlx_prepare", "build_debug_admin"],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    },
+    {
+      "label": "sqlx_prepare_build_release",
+      "dependsOn": ["sqlx_prepare", "build_release_admin"],
+      "group": {
+        "kind": "build",
+        "isDefault": false
+      }
+    }
+  ]
+}

@@ -2,10 +2,10 @@
 #[tokio::main]
 async fn main() {
     use axum::Router;
+    use front::app::*;
+    use front::fileserv::file_and_error_handler;
     use leptos::*;
     use leptos_axum::{generate_route_list, LeptosRoutes};
-    use rustpress_view::app::*;
-    use rustpress_view::fileserv::file_and_error_handler;
     use tower_http::cors::CorsLayer;
 
     // Setting get_configuration(None) means we'll be using cargo-leptos's env values
@@ -27,9 +27,7 @@ async fn main() {
 
     let listener = tokio::net::TcpListener::bind(&addr).await.unwrap();
     logging::log!("listening on http://{}", &addr);
-    axum::serve(listener, app.into_make_service())
-        .await
-        .unwrap();
+    axum::serve(listener, app.into_make_service()).await.unwrap();
 }
 
 #[cfg(not(feature = "ssr"))]

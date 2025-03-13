@@ -43,7 +43,7 @@ pub fn init(cfg: &mut web::ServiceConfig) {
             // JWT routes
             .service(
                 web::scope("/")
-                    .guard(JwtGuard)
+                    //.guard(JwtGuard)
                     // Tag Controllers
                     .service(create_tag_controller)
                     .service(get_all_tags_controller)

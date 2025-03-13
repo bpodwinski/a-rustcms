@@ -34,10 +34,7 @@ pub struct CategoryModel {
     #[validate(custom(function = "validate_slug_category"))]
     pub slug: Option<String>,
 
-    #[validate(length(
-        max = 500,
-        message = "Description maximum 500 characters"
-    ))]
+    #[validate(length(max = 500, message = "Description maximum 500 characters"))]
     pub description: Option<String>,
 
     #[serde(skip_deserializing, skip_serializing_if = "Option::is_none")]
